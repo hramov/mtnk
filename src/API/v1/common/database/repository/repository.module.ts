@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { USER_REPOSITORY } from './repository.constants';
+import {DICTIONARY_REPOSITORY, TNK_REPOSITORY, USER_REPOSITORY} from './repository.constants';
 import {UserRepository} from "./user.repository";
 import {ILogger} from "../../../../../Core/ICore";
 import {POSTGRES_STORAGE} from "../../constants";
@@ -12,6 +12,20 @@ import {LoggerModule} from "../../logger/logger.module";
 	providers: [
 		{
 			provide: USER_REPOSITORY,
+			useFactory: (logger: ILogger, storage: IDatabaseConnection) => {
+				return new UserRepository(logger, storage)
+			},
+			inject: ['CustomLogger', POSTGRES_STORAGE],
+		},
+		{
+			provide: TNK_REPOSITORY,
+			useFactory: (logger: ILogger, storage: IDatabaseConnection) => {
+				return new UserRepository(logger, storage)
+			},
+			inject: ['CustomLogger', POSTGRES_STORAGE],
+		},
+		{
+			provide: DICTIONARY_REPOSITORY,
 			useFactory: (logger: ILogger, storage: IDatabaseConnection) => {
 				return new UserRepository(logger, storage)
 			},

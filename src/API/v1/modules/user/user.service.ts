@@ -21,14 +21,14 @@ export class UserService {
     ) {}
 
     public async login(dto: Candidate): Promise<Token | Error> {
-        const userData = await this.repository.getUserByUsername(dto.username);
-        if (userData instanceof DatabaseError) {
-            return userData;
+        const user = await this.repository.getUserByUsername(dto.username);
+        if (user instanceof DatabaseError) {
+            return user;
         }
 
-        const user = userData.getUserForLogin();
+        const loginData = user.getUserForLogin();
 
-        const passwordsEqual = await compare(dto.plainPassword, user.password.toString())
+        const passwordsEqual = await compare(dto.plainPassword, loginData.password.toString())
 
         if (!passwordsEqual) {
             this.logger.log(
@@ -45,9 +45,9 @@ export class UserService {
 
         try {
             token.accessToken = await this.jwtService.signAsync({
-                userId: user.id,
-                username: user.username,
-                role: user.role,
+                userId: loginData.id,
+                username: loginData.username,
+                role: loginData.role,
             });
         } catch(err) {
             this.logger.log(
@@ -71,10 +71,10 @@ export class UserService {
     }
 
     public async getUserInfo(userId: Uuid): Promise<User | Error > {
-        const userData = await this.repository.getUserById(userId);
-        if (userData instanceof Error) {
-            return userData;
+        const user = await this.repository.getUserById(userId);
+        if (user instanceof Error) {
+            return user;
         }
-        return userData.getUserInfo();
+        return user.getUserInfo();
     }
 }

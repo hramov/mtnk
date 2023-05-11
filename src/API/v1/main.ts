@@ -32,4 +32,4 @@ async function bootstrap() {
   await app.listen(process.env.APP_PORT);
 }
 
-bootstrap();
+bootstrap().catch((err: unknown) => console.error(err))
