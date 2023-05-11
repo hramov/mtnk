@@ -1,4 +1,13 @@
-export class Role {
+import {BaseEntity} from "../../../Shared/src/BaseEntity";
 
-    public parse() {}
+export class Role extends BaseEntity<number> {
+    private role: string;
+
+    public setRole(rawRole: string) {
+        this.role = rawRole;
+    }
+
+    public parse() {
+        return this.role;
+    }
 }

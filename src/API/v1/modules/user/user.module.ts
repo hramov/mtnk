@@ -8,7 +8,7 @@ import {AuthGuard} from "./user.guard";
 import {UserService} from "./user.service";
 
 @Module({
-	imports: [LoggerModule, RepositoryModule, LoggerModule,
+	imports: [LoggerModule, RepositoryModule,
 		JwtModule.register({
 		global: true,
 		secret: process.env.TOKEN_KEY,

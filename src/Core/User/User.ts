@@ -2,21 +2,17 @@ import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
 import {Email} from "../../Shared/src/ValueObject/Objects/Email";
 import {Profile} from "./Entity/Profile";
 import {Password} from "../../Shared/src/ValueObject/Objects/Password";
-import {DateTime} from "../../Shared/src/ValueObject/Objects/DateTime";
+import {IAggregateRoot} from "../../Shared/src/IAggregateRoot";
+import {BaseEntity} from "../../Shared/src/BaseEntity";
 
-export class User {
-    private id: Uuid;
+export class User extends BaseEntity<Uuid> implements IAggregateRoot {
+    protected id: Uuid;
     private username: string;
     private fio: string;
     private email: Email;
     private isActive: boolean;
     private profile: Profile;
     private password: Password;
-    private dateCreated: DateTime;
-    private lastUpdated: DateTime;
-    private lastUpdatedBy: Uuid;
-
-    constructor() {}
 
     public setId(id: Uuid) {
         this.id = id;
@@ -25,6 +21,11 @@ export class User {
 
     public setUsername(username: string) {
         this.username = username;
+        return this;
+    }
+
+    public setPassword(password: string) {
+        this.password = new Password(password);
         return this;
     }
 
@@ -51,5 +52,9 @@ export class User {
             password: this.password,
             role: this.profile.getParsedRole(),
         }
+    }
+
+    public setProfile(profile: Profile) {
+        this.profile = profile;
     }
 }

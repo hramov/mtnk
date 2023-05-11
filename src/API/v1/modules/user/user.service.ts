@@ -10,6 +10,7 @@ import {Uuid} from "../../../../Shared/src/ValueObject/Objects/Uuid";
 import {User} from "../../../../Core/User/User";
 import {IUserRepository} from "../../../../Core/User/IUserRepository";
 import {USER_REPOSITORY} from "../../common/database/repository/repository.constants";
+import {DatabaseError} from "../../error/Database.error";
 
 @Injectable()
 export class UserService {
@@ -21,12 +22,17 @@ export class UserService {
 
     public async login(dto: Candidate): Promise<Token | Error> {
         const userData = await this.repository.getUserByUsername(dto.username);
-        const user = userData.getUserForLogin()
+        if (userData instanceof DatabaseError) {
+            return userData;
+        }
+
+        const user = userData.getUserForLogin();
+
         const passwordsEqual = await compare(dto.plainPassword, user.password.toString())
 
         if (!passwordsEqual) {
             this.logger.log(
-                `login for user ${dto.username} declined`,
+                `Login for user ${dto.username} declined`,
                 'UserService',
                 {
                     method: 'login',
@@ -45,7 +51,7 @@ export class UserService {
             });
         } catch(err) {
             this.logger.log(
-                `error while generating token: ${err}`,
+                `Error while generating token: ${err}`,
                 'UserService',
                 {
                     method: 'login',
@@ -55,7 +61,7 @@ export class UserService {
         }
 
         this.logger.log(
-            `user ${dto.username} has successfully logged in`,
+            `User ${dto.username} has successfully logged in`,
             'UserService',
             {
                 method: 'login',
@@ -65,7 +71,10 @@ export class UserService {
     }
 
     public async getUserInfo(userId: Uuid): Promise<User | Error > {
-        	const userData = await this.repository.getUserById(userId);
-        	return userData.getUserInfo();
+        const userData = await this.repository.getUserById(userId);
+        if (userData instanceof Error) {
+            return userData;
+        }
+        return userData.getUserInfo();
     }
 }

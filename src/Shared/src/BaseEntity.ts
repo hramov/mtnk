@@ -1,6 +1,9 @@
-import { BaseDomainEvent } from './BaseDomainEvent';
+import {DateTime} from "./ValueObject/Objects/DateTime";
+import {Uuid} from "./ValueObject/Objects/Uuid";
 
 export abstract class BaseEntity<T> {
-	public id: T;
-	public events: BaseDomainEvent[];
+    protected id: T
+    protected dateCreated: DateTime;
+    protected lastUpdated: DateTime;
+    protected lastUpdatedBy: Uuid;
 }

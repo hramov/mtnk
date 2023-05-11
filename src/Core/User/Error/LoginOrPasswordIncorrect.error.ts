@@ -1,1 +1,5 @@
-export class LoginOrPasswordIncorrectError extends Error {}
+export class LoginOrPasswordIncorrectError extends Error {
+    constructor() {
+        super('Login or password incorrect')
+    }
+}

@@ -1,18 +1,17 @@
-import {DateTime} from "../../../Shared/src/ValueObject/Objects/DateTime";
-import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 import {Role} from "./Role";
+import {BaseEntity} from "../../../Shared/src/BaseEntity";
 
-export class Profile {
-    private id: number;
+export class Profile extends BaseEntity<number> {
+    protected id: number;
     private title: string;
     private isActive: boolean;
-    private dateCreated: DateTime;
-    private lastUpdated: DateTime;
-    private lastUpdatedBy: Uuid;
     private isTnkTypeEnabled: boolean;
     private role: Role
 
-    getParsedRole() {
+    public setRole(role: Role) {
+        this.role = role;
+    }
+    public getParsedRole() {
         return this.role.parse();
     }
 }

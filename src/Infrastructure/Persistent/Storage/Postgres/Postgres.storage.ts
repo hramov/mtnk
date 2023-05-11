@@ -1,5 +1,5 @@
 import * as pgPromise from 'pg-promise';
-import { IClient } from 'pg-promise/typescript/pg-subset';
+import {IClient} from 'pg-promise/typescript/pg-subset';
 
 export interface IPostgresConnOptions {
 	host: string;
@@ -24,8 +24,7 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T[] | Error> {
 		try {
-			const data = await this.conn.many<T>(sql, values);
-			return data;
+			return await this.conn.many<T>(sql, values);
 		} catch (err) {
 			return err;
 		}
@@ -37,8 +36,7 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T | Error> {
 		try {
-			const data = await this.conn.one<T>(sql, values);
-			return data;
+			return await this.conn.one<T>(sql, values);
 		} catch (err) {
 			return err;
 		}
