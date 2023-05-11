@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import {LoginOrPasswordIncorrectError} from "../../../../../Core/Auth/Error/LoginOrPasswordIncorrect.error";
+import {LoginOrPasswordIncorrectError} from "../../../../../Core/User/Error/LoginOrPasswordIncorrect.error";
 
 export function LoginOrPasswordIncorrectHttpError(
 	error: LoginOrPasswordIncorrectError,

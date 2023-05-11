@@ -1,0 +1,1 @@
+export class GenerateTokenError extends Error {}
