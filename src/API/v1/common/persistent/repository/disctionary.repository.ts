@@ -49,5 +49,13 @@ export class DictionaryRepository implements IDictionaryRepository {
         return Promise.resolve(undefined);
     }
 
+    getProcess(processId: number): Promise<Process | DatabaseError> {
+        return Promise.resolve(undefined);
+    }
+
+    getSubprocess(subprocessId: number): Promise<Subprocess | DatabaseError> {
+        return Promise.resolve(undefined);
+    }
+
 
 }

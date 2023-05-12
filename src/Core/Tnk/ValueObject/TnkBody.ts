@@ -10,7 +10,9 @@ export class TnkBody extends ValueObject {
     public subprocessId: number;
     public isActive: boolean;
     public isDigital: boolean;
+    public isAutomated: string;
     public tnkDetalization: TnkDetalization
+    public statusId: number;
 
     protected *getEqualityComponents(): IterableIterator<Object> {
         return undefined;
