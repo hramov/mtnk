@@ -1,12 +1,9 @@
 import {BaseEntity} from "../../../Shared/src/BaseEntity";
-import {Subprocess} from "./Subprocess";
-import {Ip} from "../../../Shared/src/ValueObject/Objects/Ip";
+import {ApprovalSetup} from "./ApprovalSetup";
 
 export class ApprovalQueue extends BaseEntity<number> {
+    private setup: ApprovalSetup[];
+    private currentGroup: number;
     private tnkId: number;
-    private subprocess: Subprocess;
-    private isApproved: boolean;
-    private description: string;
-    private groupNum: number;
-    private userIp: Ip;
+
 }

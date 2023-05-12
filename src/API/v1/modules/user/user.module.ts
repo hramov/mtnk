@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { LoggerModule } from '../../common/logger/logger.module';
-import { RepositoryModule } from '../../common/database/repository/repository.module';
+import { RepositoryModule } from '../../common/persistent/repository/repository.module';
 import {JwtModule} from "@nestjs/jwt";
 import {APP_GUARD} from "@nestjs/core";
 import {AuthGuard} from "./user.guard";

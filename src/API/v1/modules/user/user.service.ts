@@ -9,7 +9,7 @@ import {GenerateTokenError} from "../../../../Core/User/Error/GenerateToken.erro
 import {Uuid} from "../../../../Shared/src/ValueObject/Objects/Uuid";
 import {User} from "../../../../Core/User/User";
 import {IUserRepository} from "../../../../Core/User/IUserRepository";
-import {USER_REPOSITORY} from "../../common/database/repository/repository.constants";
+import {USER_REPOSITORY} from "../../common/persistent/repository/repository.constants";
 import {DatabaseError} from "../../error/Database.error";
 
 @Injectable()
