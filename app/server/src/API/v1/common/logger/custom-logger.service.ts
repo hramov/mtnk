@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import {ILogger} from "../../../../Core/ICore";
 import {ASYNC_STORAGE} from "../constants";
-import { Logger } from 'src/Infrastructure/Logger/Logger';
+import { Logger } from '../../../../Infrastructure/Logger/Logger';
 
 @Injectable()
 export class CustomLoggerService implements ILogger {

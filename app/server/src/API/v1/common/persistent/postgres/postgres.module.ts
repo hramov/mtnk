@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import {
 	IPostgresConnOptions,
 	PostgresStorage,
-} from 'src/Infrastructure/Persistent/Storage/Postgres/Postgres.storage';
+} from './../../../../../Infrastructure/Persistent/Storage/Postgres/Postgres.storage';
 import {POSTGRES_STORAGE} from "../../constants";
 
 @Module({

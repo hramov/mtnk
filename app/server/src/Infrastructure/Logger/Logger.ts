@@ -15,7 +15,7 @@ export enum LogLevel {
 
 export class Logger implements ILogger {
 	private readonly consoleLogger = new ConsoleLogger();
-	private readonly fileLogger = new FileLogger();
+	// private readonly fileLogger = new FileLogger();
 
 	constructor(private readonly context: string) {}
 

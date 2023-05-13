@@ -5,5 +5,5 @@
   "entryFile": "API/v1/main.js",
   "compilerOptions": {
     "deleteOutDir": true
-  },
+  }
 }
