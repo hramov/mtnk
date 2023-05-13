@@ -17,7 +17,7 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix(process.env.APP_GLOBAL_PREFIX);
-
+  app.enableCors();
   app.use((req: any, res: any, next: NextFunction) => {
     const asyncStorage = app.get(ASYNC_STORAGE);
     const traceId = req.headers['x-request-id'] || new Uuid().toString();

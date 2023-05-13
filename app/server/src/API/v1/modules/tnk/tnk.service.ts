@@ -1,7 +1,11 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {ApproveData} from "../../../../Core/Tnk/ValueObject/ApproveData";
-import {DICTIONARY_REPOSITORY, TNK_REPOSITORY} from "../../common/persistent/repository/repository.constants";
+import {
+    DICTIONARY_REPOSITORY,
+    PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY,
+    TNK_REPOSITORY
+} from "../../common/persistent/repository/repository.constants";
 import {ITnkRepository} from "../../../../Core/Tnk/ITnkRepository";
 import {TnkBody} from "../../../../Core/Tnk/ValueObject/TnkBody";
 import {ConfigItem} from "../../../../Core/Tnk/Entity/ConfigItem";
@@ -14,12 +18,16 @@ import {SearchTnkSpecification} from "../../../../Core/Tnk/Specification/SearchT
 import {IDictionaryRepository} from "../../../../Core/IDictionaryRepository";
 import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
 import {Process} from "../../../../Core/Tnk/Entity/Process";
+import {IProcessRepository, ProcessSearchParams} from "../../../../Core/Tnk/IProcessRepository";
+import {ISubprocessRepository} from "../../../../Core/Tnk/ISubprocessRepository";
 
 @Injectable()
 export class TnkService {
 
     constructor(
         @Inject(TNK_REPOSITORY) private readonly tnkRepository: ITnkRepository,
+        @Inject(PROCESS_REPOSITORY) private readonly processRepository: IProcessRepository,
+        @Inject(SUBPROCESS_REPOSITORY) private readonly subprocessRepository: ISubprocessRepository,
         @Inject(DICTIONARY_REPOSITORY) private readonly dictRepository: IDictionaryRepository) {}
 
     async create(dto: TnkBody) {
@@ -128,5 +136,18 @@ export class TnkService {
 
     async getTnkToApprove(user: TokenData): Promise<number | Error> {
         return null;
+    }
+
+    async getProcesses(params: ProcessSearchParams) {
+        const processes = await this.processRepository.find(params);
+        if (processes instanceof Error) return processes;
+        const result = [];
+        for (const process of processes) {
+            result.push(process.serialize())
+        }
+        return result;
+    }
+
+    async getSubprocesses() {
     }
 }
