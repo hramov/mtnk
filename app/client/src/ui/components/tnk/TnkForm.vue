@@ -1,85 +1,43 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
-import {Api} from "../../../api/api";
-import {Process, Subprocess, Tnk} from './../../../../../shared/tnk';
-
-const model = reactive<Tnk>(new Tnk());
-const process = ref<string[]>([]);
-const subprocess = ref<string[]>([]);
-const api = new Api();
-
-const searchProcess = async (el: Event) => {
-  const val = (el.target as HTMLInputElement).value;
-  const data = await api.get<Process>('tnk/process?title=' + val);
-  process.value = data.map((item: any) => item.title);
-}
-
-const searchSubprocess = async (el: Event) => {
-  const val = (el.target as HTMLInputElement).value;
-  const data = await api.get<Subprocess>('tnk/subprocess?title=' + val);
-  subprocess.value = data.map((item: Subprocess) => item.title);
-}
+import Timeline from './../layout/Timeline.vue';
+const props = defineProps(['tnk']);
 </script>
 
 <template>
-  <v-sheet width="50%" class="pa-7">
+  <div class="tnk-form" v-if="tnk">
+    <form>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" placeholder="Название ТНК" v-model="tnk.title">
+        <label for="floatingInput">Название</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" placeholder="Процесс" v-model="tnk.process">
+        <label for="floatingPassword">Процесс</label>
+      </div>
 
-    <v-card>
-      <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
-        Основные свойства
-      </v-card-title>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" placeholder="Подпроцесс" v-model="tnk.subprocess">
+        <label for="floatingPassword">Подпроцесс</label>
+      </div>
 
-      <v-card-text>
-        <div class="text-caption pa-3">Заполните основные свойства для сохранения ТНК</div>
+    </form>
 
-        <v-form ref="form">
-          <v-text-field
-              :counter="10"
-              label="Название"
-              required
-              v-model="model.title"
-          ></v-text-field>
-
-          <v-switch label="ТНК по атрибутам"></v-switch>
-
-          <v-autocomplete
-              @input="searchProcess"
-              clearable
-              label="Процесс"
-              :items="process"
-              v-model="model.process"
-          ></v-autocomplete>
-
-          <v-autocomplete
-              @input="searchSubprocess"
-              label="Подпроцесс"
-              :items="subprocess"
-              clearable
-              v-model="model.subprocess"
-          ></v-autocomplete>
-
-          <v-select
-              label="Статус"
-              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
-          ></v-select>
-
-          <v-switch label="Активна"></v-switch>
-
-          <v-switch label="Реализуемость ЦС"></v-switch>
-
-          <v-select
-              label="Автоматизация"
-              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
-          ></v-select>
-
-          <v-select
-              label="Вид ТНК"
-              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
-          ></v-select>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-sheet>
+    <div>
+      <Timeline :timelines="props.tnk.timeline"/>
+    </div>
+  </div>
 </template>
 
-<style></style>
+<style scoped>
+.tnk-form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tnk-form > form {
+  width: 60%;
+}
+.tnk-form > div {
+  width: 35%;
+}
+</style>

@@ -1,13 +1,13 @@
 import axios, {AxiosInstance} from "axios";
-import {SnackbarColor, useLayoutStore} from "../store/layout/layout";
+import {Filters} from "../ui/components/layout/Filters.vue";
+import {useToast} from "../helpers/toast.helper";
+import {errorFactory} from "../helpers/error.helper";
 
-export class ApiError extends Error {
+export class NotFoundError extends Error {
     constructor() {
         super('Cannot fetch data from server');
     }
 }
-
-const layoutStore = useLayoutStore();
 
 export class Api {
     private readonly instance: AxiosInstance;
@@ -26,30 +26,36 @@ export class Api {
 
         this.instance.interceptors.response.use(function (response) {
             return response;
-        }, function (error) {
-            layoutStore.showAlert(SnackbarColor.Danger, error.message)
+        }, function (error: any) {
+            const statusCode = error.response && error.response.data ? error.response.data.statusCode : undefined;
+            useToast('error', 'Ошибка сети', errorFactory(statusCode))
             return Promise.resolve(error);
         });
     }
 
-    async get<T>(url: string): Promise<T[]> {
+    public  async get<T>(url: string, filters?: string): Promise<T[]> {
         try {
-            const response = await this.instance.get(url);
+            const response = await this.instance.get(url + '/' + (filters ? filters : ''));
             return response.data;
         } catch(_err: unknown) {
             return [];
         }
     }
 
-    async post() {
+    public async post() {
 
     }
 
-    async put() {
+    public async put() {
 
     }
 
-    async delete() {
+    public async delete() {
 
+    }
+
+    public formatFilterQuery(filters: Filters): string {
+        console.log(filters)
+        return ""
     }
 }

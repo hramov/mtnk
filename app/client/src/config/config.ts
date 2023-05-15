@@ -15,7 +15,7 @@ export const Roles = [
     }
 ];
 
-export const LeftMenuItems: Array<ConfigRouterItem> = [
+export const AppBarItems: Array<ConfigRouterItem> = [
     {
         id: 1,
         title: 'Администрирование',
@@ -55,6 +55,14 @@ export const LeftMenuItems: Array<ConfigRouterItem> = [
                 url: '/tnk-to-approve',
                 name: 'tnkToApprove',
                 component: 'TnkToApprove'
+            },
+            {
+                id: 3,
+                title: 'Выбранная ТНК',
+                url: '/tnk/:id',
+                name: 'singleTnk',
+                component: 'SingleTnk',
+                onlyRouter: true,
             }
         ]
     },
@@ -95,6 +103,9 @@ export const LeftMenuItems: Array<ConfigRouterItem> = [
     },
 ];
 
+export function getChildrenForDisplay(children: Array<ConfigRouterItemChildren>) {
+    return children.filter((ch) => !ch.onlyRouter)
+}
 export const UserMenuItems: Array<ConfigRouterItemChildren> = [
     {
         id: 1,
@@ -111,3 +122,44 @@ export const UserMenuItems: Array<ConfigRouterItemChildren> = [
         component: 'Logout',
     }
 ];
+
+export const enum AlertTypes {
+    Primary = 'primary',
+    Secondary = 'secondary',
+    Success = 'success',
+    Danger = 'danger',
+    Warning = 'warning',
+    Info = 'info',
+    Light = 'light',
+    Dark = 'dark'
+}
+
+export type ToastColor = 'green' | 'yellow' | 'red' | 'blue';
+export type ToastType = 'success' | 'warning' | 'error' | 'info'
+export type ToastTitle = {
+    title: string;
+    color: ToastColor;
+}
+
+export type MessageTypes = {
+    [key: string]: ToastTitle
+}
+
+export const MESSAGE_TYPES: MessageTypes = {
+    'success': {
+        title: 'Успешно!',
+        color: 'green'
+    },
+    'warning': {
+        title: 'Предупреждение...',
+        color: 'yellow'
+    },
+    'error': {
+        title: 'Ошибка!',
+        color: 'red'
+    },
+    'info': {
+        title: 'Информация',
+        color: 'blue'
+    },
+}

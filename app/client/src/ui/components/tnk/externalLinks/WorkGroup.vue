@@ -1,25 +1,20 @@
 <script setup lang="ts">
+import AutoComplete from './../../layout/AutoComplete.vue'
+import {ref} from "vue";
 
+const workGroups = ref<string[]>([]);
+
+const typeahead = (val: string) => {
+  console.log(val)
+  workGroups.value.push('КОД-ПОИСКА-ЭК')
+}
 </script>
 
 <template>
-  <v-autocomplete
-      hint="Начните вводить название РГ"
-      label="Рабочая группа"
-      persistent-hint
-      prepend-icon="mdi-city"
-  >
-    <template v-slot:append>
-      <v-slide-x-reverse-transition mode="out-in">
-        <v-icon
-            color="info"
-        ></v-icon>
-      </v-slide-x-reverse-transition>
-    </template>
-  </v-autocomplete>
+  <AutoComplete placeholder="Рабочие группы" :items="workGroups" @typeahead="typeahead"/>
 
-  <div class="wg-results">
-    Результаты поиска РГ
+  <div class="wg-results mb-4">
+    Результаты поиска ЭК
   </div>
 </template>
 

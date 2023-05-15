@@ -1,48 +1,37 @@
 <script setup lang="ts">
+import {Tnk} from "../../../../../shared/tnk";
+import Alert from "../layout/Alert.vue";
+import { AlertTypes} from "../../../config/config";
+import { openLink } from './../../../router';
 
-const emit = defineEmits(['show'])
-const tnkList = [
-  {
-    id: 1,
-    title: 'Название ТНК',
-    process: 'Процесс',
-    subprocess: 'Подпроцесс',
-    status: 'Утверждена',
-  },
-]
+type TnkTableProps = {
+  tnk: Array<Tnk>
+}
+const props = defineProps<TnkTableProps>()
 </script>
 
 <template>
-  <v-table fixed-header>
+  <div v-if="!props.tnk || props.tnk.length === 0">
+    <Alert :type="AlertTypes.Warning" message="Не удалось получить список ТНК" />
+  </div>
+  <table v-else class="table table-hover">
     <thead>
     <tr>
-      <th class="text-left">
-        Название
-      </th>
-      <th class="text-left">
-        Процесс
-      </th>
-      <th class="text-left">
-        Подпроцесс
-      </th>
-      <th class="text-left">
-        Статус
-      </th>
+      <th scope="col">Название</th>
+      <th scope="col">Процесс</th>
+      <th scope="col">Подпроцесс</th>
+      <th scope="col">Статус</th>
     </tr>
     </thead>
     <tbody>
-    <tr
-        v-for="tnk in tnkList"
-        :key="tnk.id"
-        @click="emit('show', tnk.id)"
-    >
-      <td>{{ tnk.title }}</td>
-      <td>{{ tnk.process }}</td>
-      <td>{{ tnk.subprocess }}</td>
-      <td>{{ tnk.status }}</td>
+    <tr v-for="t in props.tnk" :key="t.id" style="cursor:pointer;" @click="openLink('/tnk/' + t.id)">
+      <td>{{ t.title }}</td>
+      <td>{{ t.process.title }}</td>
+      <td>{{ t.subprocess.title }}</td>
+      <td>{{ t.statusId }}</td>
     </tr>
     </tbody>
-  </v-table>
+  </table>
 </template>
 
 <style>

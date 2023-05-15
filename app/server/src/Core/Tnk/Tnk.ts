@@ -1,4 +1,3 @@
-import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
 import {Operation} from "./Entity/Operation";
 import {ApprovalQueue} from "./Entity/ApprovalQueue";
 import {History} from "./Entity/History";
@@ -11,7 +10,7 @@ import {ApproveData} from "./ValueObject/ApproveData";
 import {Process} from "./Entity/Process";
 import {Subprocess} from "./Entity/Subprocess";
 
-export class Tnk extends BaseEntity<Uuid>{
+export class Tnk extends BaseEntity<number>{
     get configItems(): ConfigItem[] {
         return this._configItems;
     }
@@ -127,13 +126,14 @@ export class Tnk extends BaseEntity<Uuid>{
     private _history: History[];
     private _approvalQueue: ApprovalQueue[];
 
-    constructor(tnk?: Tnk) {
+    constructor(tnk?: Tnk, process?: Process, subprocess?: Subprocess) {
         super();
 
         if (tnk) {
+            this.id = tnk.id;
             this.title = tnk.title;
-            this.process = tnk.process;
-            this.subprocess = tnk.subprocess;
+            this.process = process;
+            this.subprocess = subprocess
             this.isActive = tnk.isActive;
             this.isDigital = tnk.isDigital;
             this.isAutomated = tnk.isAutomated;

@@ -15,6 +15,10 @@ export class Process extends BaseEntity<number> {
         this._title = value;
     }
 
+    get title() {
+        return this._title;
+    }
+
     set processId(value: number) {
         this.id = value
     }

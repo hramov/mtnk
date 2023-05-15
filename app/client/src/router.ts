@@ -1,7 +1,7 @@
-import {createRouter, createWebHistory} from 'vue-router';
+import {createRouter, createWebHistory, RouteLocationRaw} from 'vue-router';
 import Home from './ui/views/Home.vue'
 import Login from './ui/views/Login.vue'
-import {LeftMenuItems, UserMenuItems} from "./config/config";
+import {AppBarItems} from "./config/config";
 import {flatten} from 'lodash';
 
 export class ConfigRouterItem {
@@ -17,6 +17,7 @@ export class ConfigRouterItemChildren {
     url: string;
     name: string;
     component: string;
+    onlyRouter?: boolean
 }
 
 export interface VueRouterItem {
@@ -25,7 +26,7 @@ export interface VueRouterItem {
     component: () => Promise<any>,
 }
 
-export async function openLink(link: string) {
+export async function openLink(link: RouteLocationRaw) {
     return router.push(link)
 }
 
@@ -38,14 +39,14 @@ function makeRoutersFromGroup(items: Array<ConfigRouterItem>): Array<VueRouterIt
     )))
 }
 
-function makeRoutersFromChildren(items: Array<ConfigRouterItemChildren>) {
-    return flatten(items.map((item: ConfigRouterItemChildren) => ({
-            path: item.url,
-            name: item.name,
-            component: () => import(`./ui/views/${item.name}/${item.component}.vue`),
-        }
-    )));
-}
+// function makeRoutersFromChildren(items: Array<ConfigRouterItemChildren>) {
+//     return flatten(items.map((item: ConfigRouterItemChildren) => ({
+//             path: item.url,
+//             name: item.name,
+//             component: () => import(`./ui/views/${item.name}/${item.component}.vue`),
+//         }
+//     )));
+// }
 
 const homeItems = [
     {
@@ -62,8 +63,7 @@ const homeItems = [
 
 const routes = [
         ...homeItems,
-    ...makeRoutersFromGroup(LeftMenuItems),
-    ...makeRoutersFromChildren(UserMenuItems)
+    ...makeRoutersFromGroup(AppBarItems),
 ];
 
 const router = createRouter({

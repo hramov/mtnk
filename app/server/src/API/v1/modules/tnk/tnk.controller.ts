@@ -10,6 +10,11 @@ import {Public} from "../user/public.decorator";
 export class TnkController {
     constructor(private readonly tnkService: TnkService) {}
 
+    @Get('')
+    async getTnk() {
+        return this.tnkService.getTnk();
+    }
+
     @Post('/approve')
     async approve(@GetUser() user: TokenData, @Body() dto: ApproveData) {
         return this.tnkService.approve(user, dto);

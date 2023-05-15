@@ -17,10 +17,10 @@ import {UserService} from "./user.service";
 	controllers: [UserController],
 	providers: [
 		UserService,
-		{
-			provide: APP_GUARD,
-			useClass: AuthGuard,
-		},
+		// {
+		// 	provide: APP_GUARD,
+		// 	useClass: AuthGuard,
+		// },
 	],
 })
 export class UserModule {}

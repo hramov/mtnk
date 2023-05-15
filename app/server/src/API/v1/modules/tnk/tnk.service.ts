@@ -3,7 +3,8 @@ import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {ApproveData} from "../../../../Core/Tnk/ValueObject/ApproveData";
 import {
     DICTIONARY_REPOSITORY,
-    PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY,
+    PROCESS_REPOSITORY,
+    SUBPROCESS_REPOSITORY,
     TNK_REPOSITORY
 } from "../../common/persistent/repository/repository.constants";
 import {ITnkRepository} from "../../../../Core/Tnk/ITnkRepository";
@@ -20,6 +21,8 @@ import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
 import {Process} from "../../../../Core/Tnk/Entity/Process";
 import {IProcessRepository, ProcessSearchParams} from "../../../../Core/Tnk/IProcessRepository";
 import {ISubprocessRepository} from "../../../../Core/Tnk/ISubprocessRepository";
+import {TnkType} from "../../../../Core/Tnk/TnkType";
+import {TnkDetalization} from "../../../../Core/Tnk/TnkDetalization";
 
 @Injectable()
 export class TnkService {
@@ -149,5 +152,54 @@ export class TnkService {
     }
 
     async getSubprocesses() {
+    }
+
+    async getTnk() {
+        return [{
+            id: 1,
+            title: 'ТНК',
+            statusId: 30,
+            isActive: true,
+            isAutomated: 'нет',
+            isDigital: true,
+            type: TnkType.Ordinary,
+            tnkDetalization: TnkDetalization.General,
+            process: {
+                id: 1,
+                title: 'Процесс 1'
+            },
+            subprocess: {
+                id: 1,
+                title: 'Подпроцесс 1'
+            },
+            configItems: [
+                {
+                    id: 1,
+                    title: 'ЭК 1'
+                }
+            ],
+            workGroups: [
+                {
+                    id: 1,
+                    title: 'РГ 1'
+                }
+            ],
+            operations: [
+                {
+                    id: 1,
+                    title: 'Операция 1'
+                }
+            ],
+            timeline: [
+                {
+                    title: 'Новая',
+                    date: new Date(),
+                },
+                {
+                    title: 'На согласовании',
+                    date: new Date(),
+                }
+            ]
+        }]
     }
 }
