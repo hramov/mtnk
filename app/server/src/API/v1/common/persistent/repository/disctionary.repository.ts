@@ -23,25 +23,6 @@ export class DictionaryRepository implements IDictionaryRepository {
         return Promise.resolve([]);
     }
 
-    async addOperations(operations: ReferenceOperation[]): Promise<void | DatabaseError> {
-        const sql = `insert into tnk.operations (title, duration, unit_id, source_id, block_id, doc_num) values ($1, $2, $3, $4, $5, $6, $7)`
-        for (const operation of operations) {
-            const params = [
-                operation.title,
-                operation.duration,
-                operation.unitId,
-                operation.sourceId,
-                operation.blockId,
-                operation.docNum,
-            ]
-            const result = await this.storage.query(sql, params);
-            if (result instanceof DatabaseError) {
-                return result;
-            }
-        }
-        return Promise.resolve(undefined);
-    }
-
     addProcesses(processes: Process[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
     }
@@ -55,6 +36,10 @@ export class DictionaryRepository implements IDictionaryRepository {
     }
 
     getSubprocess(subprocessId: number): Promise<Subprocess | DatabaseError> {
+        return Promise.resolve(undefined);
+    }
+
+    addOperations(operations: ReferenceOperation[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
     }
 

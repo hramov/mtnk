@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import {EVENT_BUS} from "../constants";
-import Emitter from "events";
+import * as Emitter from "events";
 
 @Module({
     providers: [

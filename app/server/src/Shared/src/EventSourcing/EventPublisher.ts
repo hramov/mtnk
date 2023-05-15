@@ -5,8 +5,9 @@ export class EventPublisher implements IEventPublisher {
 
     constructor(private readonly eventBus: IEventBus) {}
 
-    publish<T>(customEvent: T): Promise<void> {
-        return null;
+    publish<T>(eventName: string, customEvent: T): Promise<void> {
+        this.eventBus.emit(eventName, customEvent);
+        return;
     }
 
 }

@@ -1,5 +1,6 @@
 import * as pgPromise from 'pg-promise';
 import {IClient} from 'pg-promise/typescript/pg-subset';
+import {DatabaseError} from "../../../../API/v1/error/Database.error";
 
 export interface IPostgresConnOptions {
 	host: string;
@@ -22,7 +23,7 @@ export class PostgresStorage {
 		sql: string,
 		values?: any[],
 		options?: IPostgresQueryOptions,
-	): Promise<T[] | Error> {
+	): Promise<T[] | DatabaseError> {
 		try {
 			return await this.conn.many<T>(sql, values);
 		} catch (err) {
@@ -34,7 +35,7 @@ export class PostgresStorage {
 		sql: string,
 		values?: any[],
 		options?: IPostgresQueryOptions,
-	): Promise<T | Error> {
+	): Promise<T | DatabaseError> {
 		try {
 			return await this.conn.one<T>(sql, values);
 		} catch (err) {

@@ -8,8 +8,10 @@ import {Status} from "./Entity/Status";
 import {TnkType} from "./Entity/TnkType";
 import {IEventPublisher} from "../../Shared/src/EventSourcing/IEventPublisher";
 import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
-import {TnkCreatedEvent} from "./Events/TnkCreated";
-import {TnkUpdatedEvent} from "./Events/TnkUpdated";
+import {CreateNewTnkEvent} from "./Events/TnkCreated";
+import {Ip} from "../../Shared/src/ValueObject/Objects/Ip";
+
+const AGGREGATE_EVENT = 'tnk-event';
 
 export type TnkConstructor = {
     title: string;
@@ -68,22 +70,9 @@ export class Tnk extends BaseEntity<number>{
         this.history = tnk.history;
     }
 
-    public async save() {
-        let event: TnkCreatedEvent | TnkUpdatedEvent;
-        if (this.tnkId) {
-            event = {
-                tnkId: this.tnkId,
-                tnk: this,
-                date: new Date(),
-            }
-        } else {
-            event = {
-                tnkId: new Uuid(),
-                tnk: this,
-                date: new Date(),
-            }
-        }
-        await this.eventPublisher.publish(event)
+    public async create(userId: Uuid, userIp: Ip) {
+        const event = new CreateNewTnkEvent(userId, userIp, this)
+        await this.eventPublisher.publish(AGGREGATE_EVENT, event)
     }
 
 }

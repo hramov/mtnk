@@ -17,6 +17,7 @@ import {ProcessRepository} from "./process.repository";
 import {SubprocessRepository} from "./subprocess.repository";
 import {EventBusModule} from "../../eventBus/eventBus.module";
 import {IEventBus} from "../../../../../Core/IEventBus";
+import {TnkEventRepository} from "./event/tnk.repository";
 
 @Module({
 	imports: [PostgresModule, LoggerModule, EventBusModule],
@@ -31,7 +32,7 @@ import {IEventBus} from "../../../../../Core/IEventBus";
 		{
 			provide: TNK_REPOSITORY,
 			useFactory: (logger: ILogger, eventBus: IEventBus, storage: IDatabaseConnection) => {
-				return new UserRepository(logger, eventBus, storage)
+				return new TnkEventRepository(logger, eventBus, storage)
 			},
 			inject: ['CustomLogger', EVENT_BUS, POSTGRES_STORAGE],
 		},

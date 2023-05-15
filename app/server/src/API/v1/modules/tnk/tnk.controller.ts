@@ -1,41 +1,21 @@
-import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Post} from '@nestjs/common';
 import {TnkService} from "./tnk.service";
-import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {GetUser} from "../user/user.decorator";
-import {ApproveData} from "../../../../Core/Tnk/ValueObject/ApproveData";
-import {ProcessSearchParams} from "../../../../Core/Tnk/Repository/IProcessRepository";
 import {Public} from "../user/public.decorator";
+import {TnkConstructor} from "../../../../Core/Tnk/Tnk";
+import {UserJWTPayloadDto} from "../user/dto/userJWTPayload.dto";
 
 @Controller('tnk')
 export class TnkController {
     constructor(private readonly tnkService: TnkService) {}
 
-    @Get('')
-    async getTnk() {
-        return this.tnkService.getTnk();
-    }
-
-    @Post('/approve')
-    async approve(@GetUser() user: TokenData, @Body() dto: ApproveData) {
-        return this.tnkService.approve(user, dto);
-    }
-
-    @Get('/to-approve')
-    async getTnkToApprove(@GetUser() user: TokenData) {
-        return this.tnkService.getTnkToApprove(user);
-    }
-
-    @Get('/process')
+    @Post('/')
     @Public()
-    async getProcesses(@Param('title') title: string) {
-        const params: ProcessSearchParams = {
-            title: title
+    async create(@GetUser() user: UserJWTPayloadDto, @Body() tnk: TnkConstructor) {
+        if (!user || !user.userId || !user.userIp) {
+            throw new BadRequestException();
         }
-        return this.tnkService.getProcesses(params);
+        return this.tnkService.create(tnk, user.userId, user.userIp)
     }
 
-    @Get('/subprocess')
-    async getSubprocesses() {
-        return this.tnkService.getSubprocesses();
-    }
 }
