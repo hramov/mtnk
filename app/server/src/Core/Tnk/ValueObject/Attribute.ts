@@ -1,6 +1,6 @@
 import {BaseEntity} from "../../../Shared/src/BaseEntity";
-import {CiWgList} from "../ValueObject/CiWgList";
-import {AttributeList} from "../ValueObject/AttributeList";
+import {CiWgList} from "./CiWgList";
+import {AttributeList} from "./AttributeList";
 
 export class Attribute extends BaseEntity<number> {
     private tnkId: number;

@@ -5,9 +5,10 @@ import {User} from "../../../../../Core/User/User";
 import {Profile} from "../../../../../Core/User/Entity/Profile";
 import {Uuid} from "../../../../../Shared/src/ValueObject/Objects/Uuid";
 import {DatabaseError} from "../../../error/Database.error";
+import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class UserRepository implements IUserRepository {
-    constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection) {
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {
     }
 
     async getUserByUsername(username: string): Promise<User | DatabaseError> {

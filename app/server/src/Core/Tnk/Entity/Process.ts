@@ -1,37 +1,14 @@
 import {BaseEntity} from "../../../Shared/src/BaseEntity";
 
 export class Process extends BaseEntity<number> {
-    get isActive(): boolean {
-        return this._isActive;
-    }
+    public title: string;
+    public code: string;
+    public isActive: boolean;
 
-    set isActive(value: boolean) {
-        this._isActive = value;
-    }
-    set code(value: string) {
-        this._code = value;
-    }
-    set title(value: string) {
-        this._title = value;
-    }
-
-    get title() {
-        return this._title;
-    }
-
-    set processId(value: number) {
-        this.id = value
-    }
-
-    private _title: string;
-    private _code: string;
-    private _isActive: boolean;
-
-    serialize() {
-        return {
-            id: this.id,
-            title:  this._title,
-            code: this._code
-        }
+    constructor(title: string, code: string, isActive: boolean) {
+        super();
+        this.title = title;
+        this.code = code;
+        this.isActive = isActive;
     }
 }

@@ -6,9 +6,10 @@ import {Role} from "../../../../../Core/User/Entity/Role";
 import {Process} from "../../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
 import {DatabaseError} from "../../../error/Database.error";
+import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class DictionaryRepository implements IDictionaryRepository {
-    constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection) {}
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {}
 
     getActiveRoles(): Promise<Role[]> {
         return Promise.resolve([]);

@@ -3,7 +3,7 @@ import {TnkService} from "./tnk.service";
 import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {GetUser} from "../user/user.decorator";
 import {ApproveData} from "../../../../Core/Tnk/ValueObject/ApproveData";
-import {ProcessSearchParams} from "../../../../Core/Tnk/IProcessRepository";
+import {ProcessSearchParams} from "../../../../Core/Tnk/Repository/IProcessRepository";
 import {Public} from "../user/public.decorator";
 
 @Controller('tnk')

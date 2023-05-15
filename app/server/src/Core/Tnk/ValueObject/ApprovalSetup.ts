@@ -1,5 +1,5 @@
 import {BaseEntity} from "../../../Shared/src/BaseEntity";
-import {Subprocess} from "./Subprocess";
+import {Subprocess} from "../Entity/Subprocess";
 import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 
 export class ApprovalSetup extends BaseEntity<number> {

@@ -1,8 +1,8 @@
 import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
 import {BaseEntity} from "../../Shared/src/BaseEntity";
-import {Operation} from "../Tnk/Entity/Operation";
-import {ApprovalQueue} from "../Tnk/Entity/ApprovalQueue";
-import {Attribute} from "../Tnk/Entity/Attribute";
+import {Operation} from "../Tnk/ValueObject/Operation";
+import {ApprovalQueue} from "../Tnk/ValueObject/ApprovalQueue";
+import {Attribute} from "../Tnk/ValueObject/Attribute";
 import {IAggregateRoot} from "../../Shared/src/IAggregateRoot";
 
 export class AutoTnk extends BaseEntity<number> {

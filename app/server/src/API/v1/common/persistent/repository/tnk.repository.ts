@@ -1,17 +1,18 @@
-import {ITnkRepository} from "../../../../../Core/Tnk/ITnkRepository";
+import {ITnkRepository} from "../../../../../Core/Tnk/Repository/ITnkRepository";
 import {DatabaseError} from "../../../error/Database.error";
 import {Tnk} from "../../../../../Core/Tnk/Tnk";
 import {ILogger} from "../../../../../Core/ICore";
 import {IDatabaseConnection} from "../IDatabaseConnection";
-import {ConfigItem} from "../../../../../Core/Tnk/Entity/ConfigItem";
-import {WorkGroup} from "../../../../../Core/Tnk/Entity/Workgroup";
-import {Operation} from "../../../../../Core/Tnk/Entity/Operation";
-import {ApprovalQueue} from "../../../../../Core/Tnk/Entity/ApprovalQueue";
-import {History} from "../../../../../Core/Tnk/Entity/History";
+import {ConfigItem} from "../../../../../Core/Tnk/ValueObject/ConfigItem";
+import {WorkGroup} from "../../../../../Core/Tnk/ValueObject/Workgroup";
+import {Operation} from "../../../../../Core/Tnk/ValueObject/Operation";
+import {ApprovalQueue} from "../../../../../Core/Tnk/ValueObject/ApprovalQueue";
+import {History} from "../../../../../Core/Tnk/ValueObject/History";
+import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class TnkRepository implements ITnkRepository {
 
-    constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection) {
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {
     }
 
     async create(dto: Tnk): Promise<Tnk | DatabaseError> {

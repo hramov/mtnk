@@ -1,6 +1,6 @@
-import {IBaseRepository} from "../../Shared/src/IBaseRepository";
-import {DatabaseError} from "../../API/v1/error/Database.error";
-import {Process} from "./Entity/Process";
+import {IBaseRepository} from "../../../Shared/src/IBaseRepository";
+import {DatabaseError} from "../../../API/v1/error/Database.error";
+import {Process} from "../Entity/Process";
 
 export interface ProcessSearchParams {
     title: string;

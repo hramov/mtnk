@@ -1,7 +1,7 @@
-import {IBaseRepository} from "../../Shared/src/IBaseRepository";
-import {DatabaseError} from "../../API/v1/error/Database.error";
-import {Process} from "./Entity/Process";
-import {Subprocess} from "./Entity/Subprocess";
+import {IBaseRepository} from "../../../Shared/src/IBaseRepository";
+import {DatabaseError} from "../../../API/v1/error/Database.error";
+import {Process} from "../Entity/Process";
+import {Subprocess} from "../Entity/Subprocess";
 
 export interface ISubprocessRepository extends IBaseRepository {
     find: () => Promise<Subprocess[] | DatabaseError>
