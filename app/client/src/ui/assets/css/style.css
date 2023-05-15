@@ -6,3 +6,29 @@
 body {
     background-color: white;
 }
+
+.part-title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: large;
+}
+
+.modal-content {
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+}
+
+.actions {
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.actions > * {
+    margin-left: 20px;
+}
+
+.actions-container {
+    width: 100%;
+}

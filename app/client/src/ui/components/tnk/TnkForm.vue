@@ -1,75 +1,84 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import {Api, ApiError} from "../../../api/api";
-import {Process, Subprocess} from './../.././../../../shared/tnk';
+import {reactive, ref} from "vue";
+import {Api} from "../../../api/api";
+import {Process, Subprocess, Tnk} from './../../../../../shared/tnk';
 
+const model = reactive<Tnk>(new Tnk());
 const process = ref<string[]>([]);
 const subprocess = ref<string[]>([]);
 const api = new Api();
 
 const searchProcess = async (el: Event) => {
   const val = (el.target as HTMLInputElement).value;
-  // TODO some server side search
   const data = await api.get<Process>('tnk/process?title=' + val);
   process.value = data.map((item: any) => item.title);
 }
 
 const searchSubprocess = async (el: Event) => {
   const val = (el.target as HTMLInputElement).value;
-  // TODO some server side search
   const data = await api.get<Subprocess>('tnk/subprocess?title=' + val);
   subprocess.value = data.map((item: Subprocess) => item.title);
 }
 </script>
 
 <template>
-  <v-sheet width="500" class="pa-7">
+  <v-sheet width="50%" class="pa-7">
 
-    <v-form ref="form">
-      <v-text-field
-          :counter="10"
-          label="Название"
-          required
-      ></v-text-field>
+    <v-card>
+      <v-card-title class="text-h5 font-weight-regular bg-blue-grey">
+        Основные свойства
+      </v-card-title>
 
-      <v-autocomplete
-          @input="searchProcess"
-          clearable
-          label="Процесс"
-          :items="process"
-      ></v-autocomplete>
+      <v-card-text>
+        <div class="text-caption pa-3">Заполните основные свойства для сохранения ТНК</div>
 
-      <v-autocomplete
-          @input="searchSubprocess"
-          label="Подпроцесс"
-          :items="subprocess"
-          clearable
-      ></v-autocomplete>
+        <v-form ref="form">
+          <v-text-field
+              :counter="10"
+              label="Название"
+              required
+              v-model="model.title"
+          ></v-text-field>
 
-      <v-select
-          :rules="[v => !!v || 'Item is required']"
-          label="Item"
-          required
-      ></v-select>
+          <v-switch label="ТНК по атрибутам"></v-switch>
 
-      <div class="d-flex flex-column">
-        <v-btn
-            color="success"
-            class="mt-4"
-            block
-        >
-          Сохранить
-        </v-btn>
+          <v-autocomplete
+              @input="searchProcess"
+              clearable
+              label="Процесс"
+              :items="process"
+              v-model="model.process"
+          ></v-autocomplete>
 
-        <v-btn
-            color="warning"
-            class="mt-4"
-            block
-        >
-          Сбросить
-        </v-btn>
-      </div>
-    </v-form>
+          <v-autocomplete
+              @input="searchSubprocess"
+              label="Подпроцесс"
+              :items="subprocess"
+              clearable
+              v-model="model.subprocess"
+          ></v-autocomplete>
+
+          <v-select
+              label="Статус"
+              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+          ></v-select>
+
+          <v-switch label="Активна"></v-switch>
+
+          <v-switch label="Реализуемость ЦС"></v-switch>
+
+          <v-select
+              label="Автоматизация"
+              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+          ></v-select>
+
+          <v-select
+              label="Вид ТНК"
+              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+          ></v-select>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-sheet>
 </template>
 

@@ -130,14 +130,16 @@ export class Tnk extends BaseEntity<Uuid>{
     constructor(tnk?: Tnk) {
         super();
 
-        this.title = tnk.title;
-        this.process = tnk.process;
-        this.subprocess = tnk.subprocess;
-        this.isActive = tnk.isActive;
-        this.isDigital = tnk.isDigital;
-        this.isAutomated = tnk.isAutomated;
-        this.statusId = tnk.statusId;
-        this.type = tnk.type;
+        if (tnk) {
+            this.title = tnk.title;
+            this.process = tnk.process;
+            this.subprocess = tnk.subprocess;
+            this.isActive = tnk.isActive;
+            this.isDigital = tnk.isDigital;
+            this.isAutomated = tnk.isAutomated;
+            this.statusId = tnk.statusId;
+            this.type = tnk.type;
+        }
     }
 
     async addConfigurationItem(configItem: ConfigItem): Promise<number | Error> {
