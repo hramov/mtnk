@@ -1,7 +1,7 @@
 import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
 import {BaseEntity} from "../../Shared/src/BaseEntity";
 import {Operation} from "../Tnk/ValueObject/Operation";
-import {ApprovalQueue} from "../Tnk/ValueObject/ApprovalQueue";
+import {ApprovalQueue} from "../Tnk/ValueObject/ApprovingItem";
 import {Attribute} from "../Tnk/ValueObject/Attribute";
 import {IAggregateRoot} from "../../Shared/src/IAggregateRoot";
 

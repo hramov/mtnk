@@ -11,6 +11,7 @@ import {ConfigItem} from "../../../../Core/Tnk/ValueObject/ConfigItem";
 import {ConfigItemDto} from "./dto/configItem.dto";
 import {WorkGroupDto} from "./dto/workGroup.dto";
 import {OperationDto} from "./dto/operation.dto";
+import {ApprovingDto} from "./dto/approving.dto";
 
 @Controller('tnk')
 export class TnkController {
@@ -59,7 +60,7 @@ export class TnkController {
     }
 
     @ApiBearerAuth()
-    @Put('/ci/:id')
+    @Put('/:id/ci')
     @ApiOperation({
         summary: 'Add config item'
     })
@@ -80,7 +81,7 @@ export class TnkController {
     }
 
     @ApiBearerAuth()
-    @Put('/wg/:id')
+    @Put('/:id/wg')
     @ApiOperation({
         summary: 'Add config item'
     })
@@ -101,7 +102,7 @@ export class TnkController {
     }
 
     @ApiBearerAuth()
-    @Put('/operation/:id')
+    @Put('/:id/operation')
     @ApiOperation({
         summary: 'Add config item'
     })
@@ -119,6 +120,48 @@ export class TnkController {
             }
         }
         return this.tnkService.addOperation(operation, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiBearerAuth()
+    @Put('/:id/approve')
+    @ApiOperation({
+        summary: 'Add config item'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async approve(@GetUser() user: UserJWTPayloadDto, @Body() approving: ApprovingDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.approve(approving, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiBearerAuth()
+    @Put('/:id/decline')
+    @ApiOperation({
+        summary: 'Add config item'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async decline(@GetUser() user: UserJWTPayloadDto, @Body() approving: ApprovingDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.decline(approving, tnkId, user.userId, user.userIp)
     }
 
     @ApiBearerAuth()

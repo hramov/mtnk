@@ -16,8 +16,17 @@ export class SubprocessRepository implements ISubprocessRepository {
         return Promise.resolve(undefined);
     }
 
-    findOne(subprocessId: number): Promise<Subprocess | DatabaseError> {
-        return Promise.resolve(undefined);
+    async findOne(subprocessId: number): Promise<Subprocess | DatabaseError> {
+        const sql = `
+            SELECT s.id, s.title, s.code, s."isActive", s."esppObject", s."processId", json_agg(aps.*) as "approvalSetup"
+            FROM dictionary.subprocess s
+            JOIN dictionary.approval_setup aps on aps."subprocessId" = s.id 
+            WHERE s.id = $1
+            GROUP BY s.id, s.title, s.code, s."isActive", s."esppObject", s."processId"
+        `;
+        const params = [subprocessId];
+
+        return this.storage.queryOne<Subprocess>(sql, params);
     }
 
     update(process: Subprocess): Promise<Subprocess | DatabaseError> {

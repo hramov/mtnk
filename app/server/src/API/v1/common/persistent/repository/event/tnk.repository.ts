@@ -15,6 +15,7 @@ import {ConfigItem} from "../../../../../../Core/Tnk/ValueObject/ConfigItem";
 import {WorkGroup} from "../../../../../../Core/Tnk/ValueObject/Workgroup";
 import {Operation} from "../../../../../../Core/Tnk/ValueObject/Operation";
 import {TnkSearchParams} from "../../../../../../Core/Tnk/ValueObject/TnkSearchParams";
+import {ApprovingItem} from "../../../../../../Core/Tnk/ValueObject/ApprovingItem";
 
 type TnkEvents = TnkCreatedEvent | TnkUpdatedEvent | ConfigItemAdded | WorkGroupAdded | OperationAdded;
 
@@ -129,6 +130,18 @@ export class TnkEventRepository {
                     tnk.operations.push(data)
                 } else {
                     tnk.operations = [data]
+                }
+            } else if (event.type === 'ApproverAdded') {
+                const data = new ApprovingItem({
+                    tnkId: event.data.tnkId,
+                    userId: event.data.userId,
+                    isActive: event.data.isActive,
+                    group: event.data.groupNum,
+                })
+                if (tnk.approvalQueue && Array.isArray(tnk.approvalQueue)) {
+                    tnk.approvalQueue.push(data)
+                } else {
+                    tnk.approvalQueue = [data]
                 }
             }
         }

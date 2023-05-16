@@ -1,6 +1,8 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {TnkType} from "../../../../../Core/Tnk/Entity/TnkType";
 import {Status} from "../../../../../Core/Tnk/Entity/Status";
+import {Process} from "../../../../../Core/Tnk/Entity/Process";
+import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
 
 export class TnkDto {
 
@@ -29,26 +31,42 @@ export class TnkDto {
     isAutomated: boolean;
 
     @ApiProperty({
-        example: 30,
+        example: {
+            title: 'Новая',
+            code: 10,
+        },
         description: 'Стадия жизненного цикла ТНК'
     })
     status: Status;
 
     @ApiProperty({
-        example: 'общий',
+        example: {
+            title: 'Общий'
+        },
         description: 'Детализация ТНК'
     })
     type: TnkType;
 
     @ApiProperty({
-        example: 34,
+        example: {
+            id: 34,
+            title: 'Процесс 1',
+            code: 'ПР-1',
+            isActive: true,
+        },
         description: 'Процесс ТНК'
     })
-    processId: number;
+    process: Process;
 
     @ApiProperty({
-        example: 56,
+        example: {
+            id: 56,
+            title: 'Подпроцесс 1',
+            code: 'СП-1',
+            esppObject: 'Объект 1',
+            isActive: true,
+        },
         description: 'Подпроцесс ТНК'
     })
-    subprocessId: number;
+    subprocess: Subprocess;
 }

@@ -2,9 +2,10 @@ import {Tnk, TnkConstructor} from "../Tnk";
 import {BaseEvent} from "../../BaseEvent";
 import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 import {Ip} from "../../../Shared/src/ValueObject/Objects/Ip";
+import {ApprovingItem} from "../ValueObject/ApprovingItem";
 
-export class TnkDeclinedByApprover extends BaseEvent<TnkConstructor> {
-    constructor(userId: string, userIp: Ip, data: TnkConstructor, tnkId: string) {
+export class TnkDeclinedByApprover extends BaseEvent<ApprovingItem> {
+    constructor(userId: string, userIp: Ip, data: ApprovingItem, tnkId: string) {
         super();
         this.aggregateId = tnkId;
         this.userId = userId;
