@@ -25,7 +25,7 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T[] | DatabaseError> {
 		try {
-			return await this.conn.many<T>(sql, values);
+			return this.conn.many<T>(sql, values);
 		} catch (err) {
 			return err;
 		}
@@ -37,7 +37,7 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T | DatabaseError> {
 		try {
-			return await this.conn.one<T>(sql, values);
+			return this.conn.one<T>(sql, values);
 		} catch (err) {
 			return err;
 		}

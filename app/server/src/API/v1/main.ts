@@ -6,6 +6,7 @@ import {Logger} from "../../Infrastructure/Logger/Logger";
 import {ASYNC_STORAGE} from "./common/constants";
 import {CustomLoggerService} from "./common/logger/custom-logger.service";
 import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
+import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 config({
   path: '.env.local',
 });
@@ -28,6 +29,15 @@ async function bootstrap() {
   });
 
   app.useLogger(app.get<CustomLoggerService>('CustomLogger'));
+
+  const config = new DocumentBuilder()
+      .setTitle('Mtnk')
+      .setDescription('Mtnk API')
+      .setVersion('1.0')
+      .addTag('mtnk')
+      .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(process.env.APP_PORT);
 }

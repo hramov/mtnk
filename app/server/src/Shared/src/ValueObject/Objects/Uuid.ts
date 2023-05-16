@@ -2,10 +2,10 @@ import { v4 as uuidv4, NIL } from 'uuid';
 import { ValueObject } from '../ValueObject';
 
 export class Uuid extends ValueObject {
-	private readonly value: string;
-	constructor() {
+	public value: string;
+	constructor(value?: string) {
 		super();
-		this.value = uuidv4();
+		this.value = value || uuidv4();
 	}
 
 	public toString() {

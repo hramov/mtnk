@@ -3,14 +3,14 @@ import {BaseEvent} from "../../BaseEvent";
 import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 import {Ip} from "../../../Shared/src/ValueObject/Objects/Ip";
 
-export class TnkCreatedEvent extends BaseEvent<TnkConstructor> {
-    constructor(userId: string, userIp: Ip, data: TnkConstructor) {
+export class TnkDeclinedByApprover extends BaseEvent<TnkConstructor> {
+    constructor(userId: string, userIp: Ip, data: TnkConstructor, tnkId: string) {
         super();
-        this.aggregateId = 'TNK-' + new Uuid().toString();
+        this.aggregateId = tnkId;
         this.userId = userId;
         this.userIp = userIp;
         this.data = data;
-        this.type = 'CreateNewTnk';
+        this.type = 'TnkDeclinedByApprover';
         this.dateCreated = new Date();
     }
 }

@@ -3,19 +3,18 @@ import {ValueObject} from "../../../Shared/src/ValueObject/ValueObject";
 
 export type Assignee = 'сотрудник | чат-бот | робот';
 export type OperationConstructor = {
-    tnkId: number;
+    tnkId: string;
     referenceOperationId: number;
-    amount: Amount;
+    amount: number;
     title: string;
-    isActive: boolean;
     sortOrder: number;
     assignee: Assignee;
 };
 
 export class Operation extends ValueObject {
-    private readonly tnkId: number;
+    private readonly tnkId: string;
     private readonly referenceOperationId: number;
-    private readonly amount: Amount;
+    private readonly amount: number;
     private readonly title: string;
     private readonly sortOrder: number;
     private readonly assignee: Assignee;
