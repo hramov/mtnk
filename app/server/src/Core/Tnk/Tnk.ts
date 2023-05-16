@@ -19,6 +19,10 @@ import {Process} from "./Entity/Process";
 import {Subprocess} from "./Entity/Subprocess";
 import {ApproverAdded} from "./Events/ApproverAdded";
 import {ApproverRemoved} from "./Events/ApproverRemoved";
+import {TnkApproved} from "./Events/TnkApproved";
+import {TnkStatuses} from "../Constants";
+import {TnkMovedToApproving} from "./Events/TnkMovedToApproving";
+import {TnkMovedToWithdrawn} from "./Events/TnkMovedToWithdrawn";
 
 const AGGREGATE_EVENT = 'tnk-event';
 
@@ -61,6 +65,12 @@ export class Tnk extends BaseEntity<number>{
         super();
     }
 
+    private static checkFieldsEquality<T>(field1: T, field2: T): boolean {
+        return JSON.stringify(field1) === JSON.stringify(field2);
+
+    }
+
+
     public load(tnk: TnkConstructor) {
         this.title = tnk.title;
         this.isActive = tnk.isActive;
@@ -79,25 +89,6 @@ export class Tnk extends BaseEntity<number>{
         this.history = tnk.history;
     }
 
-    public mapEntityToObject(): TnkConstructor {
-        return {
-            title: this.title,
-            isActive: this.isActive,
-            isDigital: this.isDigital,
-            isAutomated: this.isAutomated,
-            status: this.status,
-            type: this.type,
-            process: this.process,
-            subprocess: this.subprocess,
-            tnkId: this.tnkId,
-            approvalQueue: this.approvalQueue,
-            configItems: this.configItems,
-            workGroups: this.workGroups,
-            operations: this.operations,
-            history: this.history,
-        }
-    }
-
     public async create(userId: string, userIp: Ip) {
         const object = this.mapEntityToObject()
         const event = new TnkCreatedEvent(object.tnkId, userId, userIp, this.mapEntityToObject());
@@ -105,13 +96,18 @@ export class Tnk extends BaseEntity<number>{
     }
 
     public async update(tnkData: TnkConstructor, tnkId: string, userId: string, userIp: Ip) {
+
+        if (this.status.code !== TnkStatuses.New && this.status.code !== TnkStatuses.Modified) {
+            return;
+        }
+
         const delta = this.calculateDelta(tnkData);
         if (delta === null) {
             return;
         }
 
         const event = new TnkUpdatedEvent(userId, userIp, delta, tnkId);
-        await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, event)
+        await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, event);
     }
 
     public async addConfigItem(configItem: ConfigItem, tnkId: string, userId: string, userIp: Ip) {
@@ -169,29 +165,95 @@ export class Tnk extends BaseEntity<number>{
         await this.eventPublisher.publish<ApprovingItem, ApproverRemoved>(AGGREGATE_EVENT, event);
     }
 
+    public async moveToApproving(tnkId: string, userId: string, userIp: Ip) {
+        if (this.status.code === TnkStatuses.New || this.status.code === TnkStatuses.Modified) {
+            const tnk = this.mapEntityToObject();
+            tnk.status = new Status("На согласовании", TnkStatuses.Approving);
+            const delta = this.calculateDelta(tnk);
+
+            const event = new TnkMovedToApproving(userId, userIp, tnkId);
+            await this.eventPublisher.publish<void, TnkMovedToApproving>(AGGREGATE_EVENT, event);
+
+            const updatedEvent = new TnkUpdatedEvent(userId, userIp, delta, tnkId);
+            await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, updatedEvent);
+        }
+    }
+
+    public async moveToWithdrawn(tnkId: string, userId: string, userIp: Ip) {
+        if (this.status.code === TnkStatuses.Approved) {
+            const tnk = this.mapEntityToObject();
+            tnk.status = new Status("Выведена", TnkStatuses.Withdrawn);
+            const delta = this.calculateDelta(tnk);
+
+            const event = new TnkMovedToWithdrawn(userId, userIp, tnkId);
+            await this.eventPublisher.publish<void, TnkMovedToWithdrawn>(AGGREGATE_EVENT, event);
+
+            const updatedEvent = new TnkUpdatedEvent(userId, userIp, delta, tnkId);
+            await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, updatedEvent);
+        }
+    }
+
     public async approve(approvingItem: ApprovingItem, tnkId: string, userId: string, userIp: Ip) {
-        for (const aq of this.approvalQueue) {
-            if (aq.equals(approvingItem)) {
-                return;
-            }
+        if (this.status.code !== TnkStatuses.Approving) {
+            return;
         }
 
-        const event = new TnkApprovedByApprover(userId, userIp, approvingItem, tnkId);
-        await this.eventPublisher.publish<ApprovingItem, TnkApprovedByApprover>(AGGREGATE_EVENT, event);
+        if (approvingItem.userId !== userId) { // ?
+            return;
+        }
+
+        const currentGroup = this.getCurrentApprovalGroup();
+
+        if (currentGroup !== approvingItem.groupNum) {
+            return;
+        }
+
+        const previousItem = this.approvalQueue.findIndex((item) => item.userId === approvingItem.userId);
+        if (previousItem !== -1) {
+            this.approvalQueue.splice(previousItem, 1, approvingItem);
+
+            const event = new TnkApprovedByApprover(userId, userIp, approvingItem, tnkId);
+            await this.eventPublisher.publish<ApprovingItem, TnkApprovedByApprover>(AGGREGATE_EVENT, event);
+
+            await this.checkForApproved(tnkId, userId, userIp)
+        }
     }
 
     public async decline(approvingItem: ApprovingItem, tnkId: string, userId: string, userIp: Ip) {
-        for (const aq of this.approvalQueue) {
-            if (aq.equals(approvingItem)) {
-                return;
-            }
+        if (this.status.code !== TnkStatuses.Approving) {
+            return;
         }
 
-        const event = new TnkDeclinedByApprover(userId, userIp, approvingItem, tnkId);
-        await this.eventPublisher.publish<ApprovingItem, TnkDeclinedByApprover>(AGGREGATE_EVENT, event);
+        if (approvingItem.userId !== userId) {
+            return;
+        }
+
+        const previousItem = this.approvalQueue.findIndex((item) => item.userId === approvingItem.userId);
+        if (previousItem !== -1) {
+            this.approvalQueue.splice(previousItem, 1, approvingItem);
+
+            const event = new TnkDeclinedByApprover(userId, userIp, approvingItem, tnkId);
+            await this.eventPublisher.publish<ApprovingItem, TnkDeclinedByApprover>(AGGREGATE_EVENT, event);
+
+            const tnk = this.mapEntityToObject();
+            tnk.status = new Status('На доработке', TnkStatuses.Modified);
+
+            const updateEvent = new TnkUpdatedEvent(userId, userIp, this.calculateDelta(tnk), tnkId);
+            await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, updateEvent);
+        }
     }
 
-    public async checkForApproved() {}
+    public async checkForApproved(tnkId: string, userId: string, userIp: Ip) {
+        if (this.approvalQueue.filter((item) => !item.isApproved).length === 0) {
+            const tnk = this.mapEntityToObject();
+            tnk.status = new Status('Утверждена', TnkStatuses.Approved)
+            const event = new TnkApproved(userId, userIp, tnkId);
+            await this.eventPublisher.publish<void, TnkApproved>(AGGREGATE_EVENT, event);
+
+            const updateEvent = new TnkUpdatedEvent(userId, userIp, this.calculateDelta(tnk), tnkId);
+            await this.eventPublisher.publish<TnkConstructor, TnkUpdatedEvent>(AGGREGATE_EVENT, updateEvent);
+        }
+    }
 
     public calculateDelta(tnkData: TnkConstructor): TnkConstructor | null {
         const currentTnk = this.mapEntityToObject()
@@ -200,7 +262,7 @@ export class Tnk extends BaseEntity<number>{
         for (let key in tnkData) {
             if (diff === null) diff = {};
 
-            const isEqual = this.checkFieldsEquality(tnkData[key], currentTnk[key]);
+            const isEqual = Tnk.checkFieldsEquality(tnkData[key], currentTnk[key]);
             if (!isEqual) {
                 diff[key] = tnkData[key];
             }
@@ -208,9 +270,35 @@ export class Tnk extends BaseEntity<number>{
         return Object.keys(diff).length > 0 ? diff : null;
     }
 
-    private checkFieldsEquality<T>(field1: T, field2: T): boolean {
-        return JSON.stringify(field1) === JSON.stringify(field2);
-
+    private mapEntityToObject(): TnkConstructor {
+        return {
+            title: this.title,
+            isActive: this.isActive,
+            isDigital: this.isDigital,
+            isAutomated: this.isAutomated,
+            status: this.status,
+            type: this.type,
+            process: this.process,
+            subprocess: this.subprocess,
+            tnkId: this.tnkId,
+            approvalQueue: this.approvalQueue,
+            configItems: this.configItems,
+            workGroups: this.workGroups,
+            operations: this.operations,
+            history: this.history,
+        }
     }
 
+    private getCurrentApprovalGroup(): number {
+        const approved = this.approvalQueue
+            .filter((item: ApprovingItem) => item.isApproved === true)
+            .map((item: ApprovingItem) => item.groupNum)
+
+        const lastApproved = Math.max(...approved);
+
+        const countApproverInGroup = this.approvalQueue.filter((item: ApprovingItem) => item.groupNum === lastApproved);
+        const countApprovedApproverInGroup = countApproverInGroup.filter((item: ApprovingItem) => item.isApproved === true);
+
+        return countApprovedApproverInGroup.length === countApproverInGroup.length ? lastApproved + 1 : lastApproved;
+    }
 }

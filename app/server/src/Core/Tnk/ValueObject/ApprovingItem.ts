@@ -2,23 +2,32 @@ import {ValueObject} from "../../../Shared/src/ValueObject/ValueObject";
 
 export type ApprovingItemConstructor = {
     tnkId: string;
-    group: number;
+    groupNum: number;
     userId: string;
     isActive: boolean;
+    isApproved: boolean | null;
+    comments?: string;
+    dateCreated?: Date;
 }
 
 export class ApprovingItem extends ValueObject {
     public tnkId: string;
-    public group: number;
+    public groupNum: number;
     public userId: string;
     public isActive: boolean;
+    public isApproved: boolean | null;
+    public comments?: string;
+    public dateCreated?: Date;
 
     constructor(item: ApprovingItemConstructor) {
         super();
         this.tnkId = item.tnkId;
-        this.group = item.group;
+        this.groupNum = item.groupNum;
         this.userId = item.userId;
         this.isActive = item.isActive;
+        this.isApproved = item.isApproved;
+        this.comments = item.comments;
+        this.dateCreated = item.dateCreated;
     }
     protected *getEqualityComponents(): IterableIterator<Object> {
         yield this.tnkId;

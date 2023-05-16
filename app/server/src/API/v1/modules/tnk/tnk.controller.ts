@@ -18,6 +18,19 @@ export class TnkController {
     constructor(private readonly tnkService: TnkService) {}
 
     @ApiBearerAuth()
+    @Get('/:id')
+    @ApiOperation({
+        summary: 'Get tnk by id'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async getById(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
+        return this.tnkService.getById(tnkId)
+    }
+
+    @ApiBearerAuth()
     @Post('/')
     @ApiOperation({
         summary: 'Create new tnk'
@@ -123,15 +136,15 @@ export class TnkController {
     }
 
     @ApiBearerAuth()
-    @Put('/:id/approve')
+    @Put('/:id/moveToApproving')
     @ApiOperation({
-        summary: 'Add config item'
+        summary: 'Move tnk to approving state'
     })
     @ApiResponse({
         status: 200,
     })
     @Public()
-    async approve(@GetUser() user: UserJWTPayloadDto, @Body() approving: ApprovingDto, @Param('id') tnkId: string) {
+    async moveToApproving(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
         if (!user || !user.userId || !user.userIp) {
             user = {
                 userId: 'USER-123',
@@ -140,13 +153,34 @@ export class TnkController {
                 role: 'admin'
             }
         }
-        return this.tnkService.approve(approving, tnkId, user.userId, user.userIp)
+        return this.tnkService.moveToApproving(tnkId, user.userId, user.userIp)
+    }
+
+    @ApiBearerAuth()
+    @Put('/:id/approve')
+    @ApiOperation({
+        summary: 'Add config item'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async approve(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.approve(tnkId, user.userId, user.userIp)
     }
 
     @ApiBearerAuth()
     @Put('/:id/decline')
     @ApiOperation({
-        summary: 'Add config item'
+        summary: 'Add config item',
     })
     @ApiResponse({
         status: 200,
@@ -165,16 +199,23 @@ export class TnkController {
     }
 
     @ApiBearerAuth()
-    @Get('/:id')
+    @Put('/:id/moveToWithdrawn')
     @ApiOperation({
-        summary: 'Get tnk by id'
+        summary: 'Move tnk to withdrawn state'
     })
     @ApiResponse({
         status: 200,
     })
     @Public()
-    async getById(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
-        return this.tnkService.getById(tnkId)
+    async moveToWithdrawn(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.moveToWithdrawn(tnkId, user.userId, user.userIp)
     }
-
 }

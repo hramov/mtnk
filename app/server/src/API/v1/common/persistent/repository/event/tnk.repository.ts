@@ -16,8 +16,11 @@ import {WorkGroup} from "../../../../../../Core/Tnk/ValueObject/Workgroup";
 import {Operation} from "../../../../../../Core/Tnk/ValueObject/Operation";
 import {TnkSearchParams} from "../../../../../../Core/Tnk/ValueObject/TnkSearchParams";
 import {ApprovingItem} from "../../../../../../Core/Tnk/ValueObject/ApprovingItem";
+import {TnkApproved} from "../../../../../../Core/Tnk/Events/TnkApproved";
+import {TnkApprovedByApprover} from "../../../../../../Core/Tnk/Events/TnkApprovedByApprover";
+import {TnkDeclinedByApprover} from "../../../../../../Core/Tnk/Events/TnkDeclinedByApprover";
 
-type TnkEvents = TnkCreatedEvent | TnkUpdatedEvent | ConfigItemAdded | WorkGroupAdded | OperationAdded;
+type TnkEvents = TnkCreatedEvent | TnkUpdatedEvent | ConfigItemAdded | WorkGroupAdded | OperationAdded | TnkApprovedByApprover | TnkApproved | TnkDeclinedByApprover;
 
 export class TnkEventRepository {
     constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {
@@ -97,25 +100,25 @@ export class TnkEventRepository {
     private assemblyTnk(eventData: BaseEvent<any>[]): TnkConstructor {
         let tnk: TnkConstructor = null;
         for (const event of eventData) {
-            if (event.type.startsWith('Tnk')) {
+            if (event.type === 'TnkCreated' || event.type === 'TnkUpdated') {
                 if (tnk === null) {
                     tnk = _.merge({}, event.data);
                 } else {
                     tnk = _.merge(tnk, event.data);
                 }
             } else if (event.type === 'ConfigItemAdded') {
-                const data = new ConfigItem(event.data.tnkId, event.data.title)
+                const data = new ConfigItem(event.data.tnkId, event.data.title);
                 if (tnk.configItems && Array.isArray(tnk.configItems)) {
-                    tnk.configItems.push(data)
+                    tnk.configItems.push(data);
                 } else {
-                    tnk.configItems = [data]
+                    tnk.configItems = [data];
                 }
             } else if (event.type === 'WorkGroupAdded') {
-                const data = new WorkGroup(event.data.tnkId, event.data.title)
+                const data = new WorkGroup(event.data.tnkId, event.data.title);
                 if (tnk.workGroups && Array.isArray(tnk.workGroups)) {
-                    tnk.workGroups.push(data)
+                    tnk.workGroups.push(data);
                 } else {
-                    tnk.workGroups = [data]
+                    tnk.workGroups = [data];
                 }
             } else if (event.type === 'OperationAdded') {
                 const data = new Operation({
@@ -136,15 +139,32 @@ export class TnkEventRepository {
                     tnkId: event.data.tnkId,
                     userId: event.data.userId,
                     isActive: event.data.isActive,
-                    group: event.data.groupNum,
+                    groupNum: event.data.groupNum,
+                    isApproved: null,
+                    dateCreated: event.dateCreated,
                 })
                 if (tnk.approvalQueue && Array.isArray(tnk.approvalQueue)) {
-                    tnk.approvalQueue.push(data)
+                    tnk.approvalQueue.push(data);
                 } else {
-                    tnk.approvalQueue = [data]
+                    tnk.approvalQueue = [data];
+                }
+            } else if (event.type === 'TnkApprovedByApprover') {
+                const previousItem = tnk.approvalQueue.findIndex((item) => item.userId === event.data.userId);
+                if (previousItem !== -1) {
+                    const data = new ApprovingItem({
+                        tnkId: event.data.tnkId,
+                        userId: event.data.userId,
+                        isActive: event.data.isActive,
+                        groupNum: event.data.groupNum,
+                        isApproved: event.data.isApproved,
+                        dateCreated: event.dateCreated,
+                    });
+
+                    tnk.approvalQueue.splice(previousItem, 1, data);
                 }
             }
         }
+
         tnk.tnkId = eventData[0].aggregateId;
         return tnk;
     }

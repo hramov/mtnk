@@ -1,6 +1,6 @@
 export class ApprovingDto {
     public tnkId: string;
-    public group: number;
+    public groupNum: number;
     public userId: string;
     public isActive: boolean;
 }

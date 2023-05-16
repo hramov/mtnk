@@ -39,7 +39,7 @@ export class TnkService {
             isActive: dto.isActive,
             isDigital: dto.isDigital,
             isAutomated: dto.isAutomated,
-            status: dto.status,
+            status: null,
             type: dto.type,
             process: dto.process,
             subprocess: dto.subprocess,
@@ -75,8 +75,24 @@ export class TnkService {
 
         const tnk = tnkFactory(this.logger, this.eventBus);
         tnk.load(currentTnk);
-        tnk.approvalQueue = [];
-        return tnk.update(this.tnkMapper(dto), tnkId, userId, userIp);
+
+        await tnk.update(this.tnkMapper(dto), tnkId, userId, userIp);
+
+        if (tnk.subprocess.id !== currentTnk.subprocess.id) {
+
+            for (const ca of currentTnk.approvalQueue) {
+                await tnk.removeApprover(ca, tnk.tnkId, userId, userIp);
+            }
+
+            const subprocess = await this.subprocessRepository.findOne(dto.subprocess.id);
+            if (subprocess instanceof DatabaseError) {
+                return subprocess;
+            }
+
+            for (const approver of subprocess.approvalSetup) {
+                await tnk.addApprover(approver, tnk.tnkId, userId, userIp);
+            }
+        }
     }
 
     async addConfigItem(dto: ConfigItemDto, tnkId: string, userId: string, userIp: Ip) {
@@ -119,7 +135,18 @@ export class TnkService {
         }), tnkId, userId, userIp);
     }
 
-    async approve(dto: ApprovingDto, tnkId: string, userId: string, userIp: Ip) {
+    async moveToApproving(tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.logger, this.eventBus);
+        tnk.load(currentTnk);
+        await tnk.moveToApproving(tnkId, userId, userIp);
+    }
+
+    async approve(tnkId: string, userId: string, userIp: Ip) {
         const currentTnk = await this.tnkRepository.getByAggregateId(tnkId);
         if (currentTnk instanceof DatabaseError) {
             return currentTnk;
@@ -129,9 +156,10 @@ export class TnkService {
         tnk.load(currentTnk);
         await tnk.approve(new ApprovingItem({
             tnkId: tnkId,
-            userId: dto.userId,
-            group: dto.group,
-            isActive: dto.isActive
+            userId: userId,
+            groupNum: 0,
+            isActive: true,
+            isApproved: true,
         }), tnkId, userId, userIp);
 
         // check for status changing
@@ -140,7 +168,6 @@ export class TnkService {
             return newTnk;
         }
         tnk.load(newTnk);
-        await tnk.checkForApproved();
     }
 
     async decline(dto: ApprovingDto, tnkId: string, userId: string, userIp: Ip) {
@@ -151,5 +178,24 @@ export class TnkService {
 
         const tnk = tnkFactory(this.logger, this.eventBus);
         tnk.load(currentTnk);
+
+        await tnk.decline(new ApprovingItem({
+            tnkId: tnkId,
+            userId: dto.userId,
+            groupNum: dto.groupNum,
+            isActive: dto.isActive,
+            isApproved: false,
+        }), tnkId, userId, userIp);
+    }
+
+    async moveToWithdrawn(tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.logger, this.eventBus);
+        tnk.load(currentTnk);
+        await tnk.moveToWithdrawn(tnkId, userId, userIp);
     }
 }
