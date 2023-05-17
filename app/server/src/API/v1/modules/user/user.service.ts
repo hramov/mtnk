@@ -11,12 +11,13 @@ import {User} from "../../../../Core/User/User";
 import {IUserRepository} from "../../../../Core/User/IUserRepository";
 import {USER_REPOSITORY} from "../../common/persistent/repository/repository.constants";
 import {DatabaseError} from "../../error/Database.error";
+import { LOGGER } from '../../common/constants';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly jwtService: JwtService,
-        @Inject('CustomLogger') private readonly logger: ILogger,
+        @Inject(LOGGER) private readonly logger: ILogger,
         @Inject(USER_REPOSITORY) private readonly repository: IUserRepository
     ) {}
 

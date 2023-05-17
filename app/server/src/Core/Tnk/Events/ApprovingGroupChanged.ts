@@ -1,9 +1,8 @@
 import {BaseEvent} from "../../BaseEvent";
-import {ApprovingItem} from "../ValueObject/ApprovingItem";
 import {Ip} from "../../../Shared/src/ValueObject/Objects/Ip";
 
-export class ApprovingGroupChanged extends BaseEvent<ApprovingItem> {
-    constructor(userId: string, userIp: Ip, data: ApprovingItem, tnkId: string) {
+export class ApprovingGroupChanged extends BaseEvent<number> {
+    constructor(userId: string, userIp: Ip, data: number, tnkId: string) {
         super();
         this.aggregateId = tnkId;
         this.userId = userId;

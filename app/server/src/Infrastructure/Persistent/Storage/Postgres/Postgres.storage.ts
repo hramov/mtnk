@@ -1,6 +1,7 @@
 import * as pgPromise from 'pg-promise';
 import {IClient} from 'pg-promise/typescript/pg-subset';
 import {DatabaseError} from "../../../../API/v1/error/Database.error";
+import QueryResultError = pgPromise.errors.QueryResultError;
 
 export interface IPostgresConnOptions {
 	host: string;
@@ -25,9 +26,13 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T[] | DatabaseError> {
 		try {
-			return this.conn.many<T>(sql, values);
-		} catch (err) {
-			return err;
+			const data = await this.conn.many<T>(sql, values);
+			return data;
+		} catch (err: unknown) {
+			if (err instanceof QueryResultError) {
+				return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
+			}
+			return new DatabaseError();
 		}
 	}
 
@@ -37,9 +42,17 @@ export class PostgresStorage {
 		options?: IPostgresQueryOptions,
 	): Promise<T | DatabaseError> {
 		try {
-			return this.conn.one<T>(sql, values);
+			const data = await this.conn.one<T>(sql, values);
+			return data;
 		} catch (err) {
-			return err;
+			if (err instanceof QueryResultError) {
+				return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
+			}
+			return new DatabaseError();
 		}
+	}
+
+	private static cleanErrorMessage(message: string) {
+		return message.replace(/ +(?= )/g,'').replace(/(\r\n|\n|\r)/gm, "").trim();
 	}
 }

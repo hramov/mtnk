@@ -6,6 +6,7 @@ import {Process} from "../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
 import {ReferenceOperation} from "../../../../Core/Tnk/Entity/ReferenceOperation";
 import {DatabaseError} from "../../error/Database.error";
+import { LOGGER } from '../../common/constants';
 
 export const enum DictionaryType {
     Process,
@@ -22,7 +23,7 @@ export interface ImportDictionary {
 export class DictionaryService {
 
     constructor(
-        @Inject('CustomLogger') private readonly logger: ILogger,
+        @Inject(LOGGER) private readonly logger: ILogger,
         @Inject(DICTIONARY_REPOSITORY) private readonly repository: IDictionaryRepository
     ) {}
 

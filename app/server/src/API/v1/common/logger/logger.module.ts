@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CustomLoggerService } from './custom-logger.service';
 import { AsyncLocalStorageModule } from '../asyncLocalStorage/asyncLocalStorage.module';
+import { LOGGER } from '../constants';
 
 @Module({
 	imports: [AsyncLocalStorageModule],
 	providers: [
 		{
-			provide: 'CustomLogger',
+			provide: LOGGER,
 			useClass: CustomLoggerService,
 		},
 	],
-	exports: ['CustomLogger'],
+	exports: [LOGGER],
 })
 export class LoggerModule {}

@@ -9,13 +9,27 @@ import {GetUser} from "./user.decorator";
 import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {Public} from "./public.decorator";
 import {DatabaseError} from "../../error/Database.error";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
-	@Post('login')
+	@ApiTags('User')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Login user'
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'Success login'
+	})
+	@ApiResponse({
+		status: 401,
+		description: 'Unauthorized'
+	})
 	@Public()
+	@Post('login')
 	async login(@Body() dto: Candidate) {
 		const result = await this.userService.login(dto);
 		if (result instanceof DatabaseError) {
@@ -26,6 +40,16 @@ export class UserController {
 		return result;
 	}
 
+	@ApiTags('User')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'User information'
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'Get data'
+	})
+	@Public()
 	@Get('info')
 	async info(@GetUser() user: TokenData) {
 		return this.userService.getUserInfo(user.userId);

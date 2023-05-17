@@ -11,4 +11,8 @@ export class Ip extends ValueObject {
         return undefined;
     }
 
+    toString() {
+        return String(this.value)
+    }
+
 }

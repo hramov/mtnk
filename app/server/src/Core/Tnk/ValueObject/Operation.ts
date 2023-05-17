@@ -12,12 +12,12 @@ export type OperationConstructor = {
 };
 
 export class Operation extends ValueObject {
-    private readonly tnkId: string;
-    private readonly referenceOperationId: number;
-    private readonly amount: number;
-    private readonly title: string;
-    private readonly sortOrder: number;
-    private readonly assignee: Assignee;
+    public tnkId: string;
+    public referenceOperationId: number;
+    public amount: number;
+    public title: string;
+    public sortOrder: number;
+    public assignee: Assignee;
 
     constructor(operation: OperationConstructor) {
         super()

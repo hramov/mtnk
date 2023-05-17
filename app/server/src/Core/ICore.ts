@@ -1,5 +1,6 @@
 export interface ILoggerOptions {
-    method: string
+    method: string,
+    [key: string]: string
 }
 
 export interface ILogger {

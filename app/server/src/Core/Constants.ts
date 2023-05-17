@@ -1,4 +1,4 @@
-export const enum TnkStatuses {
+export enum TnkStatuses {
     New = 10,
     Modified = 15,
     Approving = 20,

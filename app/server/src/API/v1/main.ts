@@ -33,8 +33,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
       .setTitle('Mtnk')
       .setDescription('Mtnk API')
-      .setVersion('1.0')
-      .addTag('mtnk')
+      .setVersion('1.0.0')
       .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);

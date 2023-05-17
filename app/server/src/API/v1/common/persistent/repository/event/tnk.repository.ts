@@ -4,10 +4,10 @@ import {ILogger} from "../../../../../../Core/ICore";
 import {IDatabaseConnection} from "../../IDatabaseConnection";
 import {DatabaseError} from "../../../../error/Database.error";
 import {IEventBus} from "../../../../../../Core/IEventBus";
-import {TnkCreatedEvent} from "../../../../../../Core/Tnk/Events/TnkCreated";
+import {TnkCreated} from "../../../../../../Core/Tnk/Events/TnkCreated";
 import {BaseEvent} from "../../../../../../Core/BaseEvent";
 import {TnkConstructor} from "../../../../../../Core/Tnk/Tnk";
-import {TnkUpdatedEvent} from "../../../../../../Core/Tnk/Events/TnkUpdated";
+import {TnkUpdated} from "../../../../../../Core/Tnk/Events/TnkUpdated";
 import {ConfigItemAdded} from "../../../../../../Core/Tnk/Events/ConfigItemAdded";
 import {WorkGroupAdded} from "../../../../../../Core/Tnk/Events/WorkGroupAdded";
 import {OperationAdded} from "../../../../../../Core/Tnk/Events/OperationAdded";
@@ -19,8 +19,9 @@ import {ApprovingItem} from "../../../../../../Core/Tnk/ValueObject/ApprovingIte
 import {TnkApproved} from "../../../../../../Core/Tnk/Events/TnkApproved";
 import {TnkApprovedByApprover} from "../../../../../../Core/Tnk/Events/TnkApprovedByApprover";
 import {TnkDeclinedByApprover} from "../../../../../../Core/Tnk/Events/TnkDeclinedByApprover";
+import { ApproverAdded } from '../../../../../../Core/Tnk/Events/ApproverAdded';
 
-type TnkEvents = TnkCreatedEvent | TnkUpdatedEvent | ConfigItemAdded | WorkGroupAdded | OperationAdded | TnkApprovedByApprover | TnkApproved | TnkDeclinedByApprover;
+type TnkEvents = TnkCreated | TnkUpdated | ConfigItemAdded | WorkGroupAdded | OperationAdded | TnkApprovedByApprover | TnkApproved | TnkDeclinedByApprover;
 
 export class TnkEventRepository {
     constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {
@@ -37,7 +38,7 @@ export class TnkEventRepository {
             if (lastRevision instanceof DatabaseError) {
                 this.logger.error(lastRevision.message, 'TnkEventRepository', lastRevision.stack, {
                     method: 'writeListener'
-                })
+                });
                 return;
             }
 
@@ -57,6 +58,24 @@ export class TnkEventRepository {
                 return;
             }
         });
+    }
+
+    async get(searchParams: TnkSearchParams): Promise<TnkConstructor[] | DatabaseError> {
+        const sql = `
+            SELECT *  
+            FROM report.tnk
+            ORDER BY "dateCreated" DESC
+            LIMIT $1 OFFSET $2
+        `;
+        const params = [searchParams.limit, searchParams.offset];
+
+        const result = await this.storage.query<TnkConstructor>(sql, params);
+        if (result instanceof DatabaseError) {
+            this.logger.error(result.message, 'TnkEventRepository', null, {
+                method: 'writeListener'
+            });
+        }
+        return result;
     }
 
     async getByAggregateId(aggregateId: string): Promise<TnkConstructor | DatabaseError> {
@@ -79,24 +98,6 @@ export class TnkEventRepository {
         return this.assemblyTnk(result);
     }
 
-    async get(searchParams: TnkSearchParams): Promise<TnkConstructor[] | DatabaseError> {
-        const sql = `
-            SELECT *  
-            FROM report.tnk
-            ORDER BY "dateCreated" DESC
-            LIMIT $1 OFFSET $2
-        `;
-        const params = [searchParams.limit, searchParams.offset];
-
-        const result = await this.storage.query<TnkConstructor>(sql, params);
-        if (result instanceof DatabaseError) {
-            this.logger.error(result.message, 'TnkEventRepository', null, {
-                method: 'writeListener'
-            });
-        }
-        return result;
-    }
-
     private assemblyTnk(eventData: BaseEvent<any>[]): TnkConstructor {
         let tnk: TnkConstructor = null;
         for (const event of eventData) {
@@ -113,14 +114,14 @@ export class TnkEventRepository {
                 } else {
                     tnk.configItems = [data];
                 }
-            } else if (event.type === 'WorkGroupAdded') {
+            } else if (event.type ===  'WorkGroupAdded') {
                 const data = new WorkGroup(event.data.tnkId, event.data.title);
                 if (tnk.workGroups && Array.isArray(tnk.workGroups)) {
                     tnk.workGroups.push(data);
                 } else {
                     tnk.workGroups = [data];
                 }
-            } else if (event.type === 'OperationAdded') {
+            } else if (event.type ===  'OperationAdded') {
                 const data = new Operation({
                     tnkId: event.data.tnkId,
                     title: event.data.title,
@@ -159,7 +160,6 @@ export class TnkEventRepository {
                         isApproved: event.data.isApproved,
                         dateCreated: event.dateCreated,
                     });
-
                     tnk.approvalQueue.splice(previousItem, 1, data);
                 }
             }

@@ -1,5 +1,5 @@
 export class DatabaseError extends Error {
-    constructor() {
-        super('Database error');
+    constructor(message?: string) {
+        super('Database error: ' + message ? message : '');
     }
 }

@@ -3,7 +3,7 @@ import {
     SUBPROCESS_REPOSITORY,
     TNK_REPOSITORY
 } from "../../common/persistent/repository/repository.constants";
-import {EVENT_BUS} from "../../common/constants";
+import { EVENT_BUS, LOGGER } from '../../common/constants';
 import {tnkFactory} from "../../../../Core/Tnk/TnkFactory";
 import {Ip} from "../../../../Shared/src/ValueObject/Objects/Ip";
 import {TnkEventRepository} from "../../common/persistent/repository/event/tnk.repository";
@@ -22,11 +22,12 @@ import {ApprovingItem} from "../../../../Core/Tnk/ValueObject/ApprovingItem";
 import {ApprovingDto} from "./dto/approving.dto";
 import {ISubprocessRepository} from "../../../../Core/Tnk/Repository/ISubprocessRepository";
 import {Uuid} from "../../../../Shared/src/ValueObject/Objects/Uuid";
+import { TnkSearchParams } from '../../../../Core/Tnk/ValueObject/TnkSearchParams';
 
 @Injectable()
 export class TnkService {
     constructor(
-        @Inject('CustomLogger') private readonly logger: ILogger,
+        @Inject(LOGGER) private readonly logger: ILogger,
         @Inject(TNK_REPOSITORY) private readonly tnkRepository: TnkEventRepository,
         @Inject(SUBPROCESS_REPOSITORY) private readonly subprocessRepository: ISubprocessRepository,
         @Inject(EVENT_BUS) private readonly eventBus: IEventBus
@@ -46,8 +47,15 @@ export class TnkService {
         };
     }
 
-    async getById(tnkId: string) {
-        return this.tnkRepository.getByAggregateId(tnkId);
+    async get(searchParams: TnkSearchParams) {
+        return this.tnkRepository.get(searchParams);
+    }
+
+    async getById(tnkId: string, userId: string) {
+        const tnk = await this.tnkRepository.getByAggregateId(tnkId);
+
+        // TODO add user privileges
+        return tnk;
     }
 
     async create(dto: TnkDto, userId: string, userIp: Ip) {
@@ -76,7 +84,18 @@ export class TnkService {
         const tnk = tnkFactory(this.logger, this.eventBus);
         tnk.load(currentTnk);
 
-        await tnk.update(this.tnkMapper(dto), tnkId, userId, userIp);
+        const result = await tnk.update(this.tnkMapper(dto), tnkId, userId, userIp);
+
+        if (result instanceof Error) {
+            this.logger.warn(result.message, 'TnkService', {
+                method: 'update',
+                tnkId: tnkId,
+                userId: userId,
+                userIp: userIp.toString(),
+            });
+
+            return result;
+        }
 
         if (tnk.subprocess.id !== currentTnk.subprocess.id) {
 
@@ -152,22 +171,16 @@ export class TnkService {
             return currentTnk;
         }
 
+        const subprocess = await this.subprocessRepository.findOne(currentTnk.subprocess.id);
+        if (subprocess instanceof DatabaseError) {
+            return subprocess;
+        }
+
+        currentTnk.subprocess.approvalSetup = subprocess.approvalSetup;
+
         const tnk = tnkFactory(this.logger, this.eventBus);
         tnk.load(currentTnk);
-        await tnk.approve(new ApprovingItem({
-            tnkId: tnkId,
-            userId: userId,
-            groupNum: 0,
-            isActive: true,
-            isApproved: true,
-        }), tnkId, userId, userIp);
-
-        // check for status changing
-        const newTnk = await this.tnkRepository.getByAggregateId(tnkId);
-        if (newTnk instanceof DatabaseError) {
-            return newTnk;
-        }
-        tnk.load(newTnk);
+        await tnk.approve(tnkId, userId, userIp);
     }
 
     async decline(dto: ApprovingDto, tnkId: string, userId: string, userIp: Ip) {
@@ -181,10 +194,11 @@ export class TnkService {
 
         await tnk.decline(new ApprovingItem({
             tnkId: tnkId,
-            userId: dto.userId,
+            userId: userId,
             groupNum: dto.groupNum,
             isActive: dto.isActive,
             isApproved: false,
+            comments: dto.comments,
         }), tnkId, userId, userIp);
     }
 

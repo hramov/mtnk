@@ -3,4 +3,5 @@ export class ApprovingDto {
     public groupNum: number;
     public userId: string;
     public isActive: boolean;
+    public comments?: string;
 }

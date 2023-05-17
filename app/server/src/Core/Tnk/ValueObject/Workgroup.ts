@@ -1,8 +1,8 @@
 import {ValueObject} from "../../../Shared/src/ValueObject/ValueObject";
 
 export class WorkGroup extends ValueObject {
-    private readonly tnkId: string;
-    private readonly title: string;
+    public tnkId: string;
+    public title: string;
 
     constructor(tnkId: string, title: string) {
         super()

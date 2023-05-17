@@ -3,7 +3,7 @@ import {BaseEvent} from "../../BaseEvent";
 import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 import {Ip} from "../../../Shared/src/ValueObject/Objects/Ip";
 
-export class TnkCreatedEvent extends BaseEvent<TnkConstructor> {
+export class TnkCreated extends BaseEvent<TnkConstructor> {
     constructor(aggregateId: string, userId: string, userIp: Ip, data: TnkConstructor) {
         super();
         this.aggregateId = aggregateId,

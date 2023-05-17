@@ -38,3 +38,4 @@ lerna-debug.log*
 app/server/.env.local
 bundle/
 dist/
+.env*
