@@ -7,6 +7,7 @@ import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
 import {ReferenceOperation} from "../../../../Core/Tnk/Entity/ReferenceOperation";
 import {DatabaseError} from "../../error/Database.error";
 import { LOGGER } from '../../common/constants';
+import { UserJWTPayloadDto } from '../user/dto/userJWTPayload.dto';
 
 export const enum DictionaryType {
     Process,
@@ -46,8 +47,36 @@ export class DictionaryService {
         return result;
     }
 
+    async createSubprocess(user: UserJWTPayloadDto, dto: Subprocess) {
+        const result = await this.repository.createSubprocess(dto, user.userId);
+        if (result instanceof DatabaseError) {
+            return new InternalServerErrorException(result.message, {
+                cause: result
+            })
+        }
+        return result;
+    }
+
+    async updateSubprocess(user: UserJWTPayloadDto, dto: Subprocess, subprocessId: number) {
+        const result = await this.repository.updateSubprocess(dto, user.userId, subprocessId);
+        if (result instanceof DatabaseError) {
+            return new InternalServerErrorException(result.message, {
+                cause: result
+            })
+        }
+        return result;
+    }
+
     async getOperations() {
         const result = await this.repository.getOperationList();
+        if (result instanceof DatabaseError) {
+            return new InternalServerErrorException(result)
+        }
+        return result;
+    }
+
+    async getItsmProcess() {
+        const result = await this.repository.getItsmProcess();
         if (result instanceof DatabaseError) {
             return new InternalServerErrorException(result)
         }

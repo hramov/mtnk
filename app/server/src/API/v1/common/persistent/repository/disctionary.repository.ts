@@ -2,26 +2,14 @@ import {ILogger} from "../../../../../Core/ICore";
 import {IDatabaseConnection} from "../IDatabaseConnection";
 import {IDictionaryRepository} from "../../../../../Core/IDictionaryRepository";
 import {ReferenceOperation} from "../../../../../Core/Tnk/Entity/ReferenceOperation";
-import {Role} from "../../../../../Core/User/Entity/Role";
 import {Process} from "../../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
 import {DatabaseError} from "../../../error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
+import { ItsmProcess } from '../../../../../Core/Tnk/Entity/ItsmProcess';
 
 export class DictionaryRepository implements IDictionaryRepository {
     constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {}
-
-    getActiveRoles(): Promise<Role[]> {
-        return Promise.resolve([]);
-    }
-
-    getAllDictItems(): Promise<any[]> {
-        return Promise.resolve([]);
-    }
-
-    getEditableDictTypes(): Promise<any[]> {
-        return Promise.resolve([]);
-    }
 
     addProcesses(processes: Process[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
@@ -59,7 +47,7 @@ export class DictionaryRepository implements IDictionaryRepository {
 
         if (result instanceof DatabaseError) {
             this.logger.error(result.message, 'DictionaryRepository', null, {
-                method: 'writeListener'
+                method: 'getSubprocessList'
             });
             return result;
         }
@@ -67,11 +55,76 @@ export class DictionaryRepository implements IDictionaryRepository {
         return result;
     }
 
-    getOperationList(): Promise<ReferenceOperation[] | DatabaseError> {
+    async getOperationList(): Promise<ReferenceOperation[] | DatabaseError> {
         const sql = `
             SELECT * FROM dictionary."referenceOperation"
         `;
         return this.storage.query<ReferenceOperation>(sql);
+    }
+
+    async getItsmProcess(): Promise<ItsmProcess[] | DatabaseError> {
+        const sql = `SELECT id, title FROM dictionary."itsmProcess"`;
+        return this.storage.query<ItsmProcess>(sql);
+    }
+
+    async createSubprocess(dto: Subprocess, userId: string): Promise<number | DatabaseError> {
+        const sql = `
+            INSERT INTO dictionary.subprocess ("processId", title, code, "isActive", "esppObject", "dateCreated", "lastUpdated", "lastUpdatedBy", "itsmProcessId") 
+            VALUES ($1, $2, $3, $4, $5, now(), null, $6, $7)
+            RETURNING id
+        `;
+
+        const params = [
+            dto.processId,
+            dto.title,
+            dto.code,
+            dto.isActive,
+            dto.esppObject,
+            userId,
+            dto.itsmProcess.id
+        ];
+
+        const result = await this.storage.queryOne<Subprocess>(sql, params);
+
+        if (result instanceof DatabaseError) {
+            this.logger.error(result.message, 'DictionaryRepository', null, {
+                method: 'createSubprocess'
+            });
+            return result;
+        }
+
+        return result.id;
+    }
+
+    async updateSubprocess(dto: Subprocess, userId: string, subprocessId: number): Promise<number | DatabaseError> {
+        const sql = `
+            UPDATE dictionary.subprocess
+            SET "processId" = $1, title = $2, code = $3, "isActive" = $4, "esppObject" = $5, "lastUpdatedBy" = $6, "itsmProcessId" = $7
+            WHERE id = $8
+            RETURNING id
+        `;
+
+        const params = [
+            dto.processId,
+            dto.title,
+            dto.code,
+            dto.isActive,
+            dto.esppObject,
+            userId,
+            dto.itsmProcess.id,
+            subprocessId
+        ];
+
+        const result = await this.storage.queryOne<Subprocess>(sql, params);
+
+        if (result instanceof DatabaseError) {
+            this.logger.error(result.message, 'DictionaryRepository', null, {
+                method: 'updateSubprocess'
+            });
+            return result;
+        }
+
+        return result.id;
     }
 
 }
