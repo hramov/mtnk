@@ -4,10 +4,12 @@ import { Subprocess } from '../../../../../shared/tnk';
 import { DictionaryService } from '../../../api/dictionary';
 import { openModal } from '../../../helpers/modal.helper';
 import SubprocessModal from '../../components/dictionary/subprocess/SubprocessModal.vue';
+import Alert from '../../components/layout/Alert.vue';
 
 const dictionaryService = new DictionaryService();
 
-const subprocess = ref<Array<Subprocess>>([])
+const subprocess = ref<Array<Subprocess>>([]);
+
 onMounted(async () => {
 	subprocess.value = await dictionaryService.getSubprocessList({});
 });
@@ -59,12 +61,13 @@ const close = () => {
 		<tbody>
 		<tr v-for='s in subprocess' :key='s.id' class='clickable' @click='openSubprocess(s)'>
 			<td>{{ s.title }}</td>
-			<td>{{ s.itsmProcess }}</td>
+			<td>{{ s.itsmProcess.title }}</td>
 			<td>{{ s.code }}</td>
 			<td>{{ s.isActive ? 'да' : 'нет' }}</td>
 		</tr>
 		</tbody>
 	</table>
+	<Alert v-else type='warning' message='Нет данных'/>
 
 	<SubprocessModal :subprocess='subprocessToEdit' :key='subprocessToEdit.id' @save='save' @close='close'/>
 </template>

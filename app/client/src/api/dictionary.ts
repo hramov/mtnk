@@ -17,7 +17,8 @@ export class DictionaryService {
 
 	async getSubprocessList(filters: Filters<Subprocess>): Promise<Array<Subprocess>> {
 		const filtersQuery = this.instance.formatFilterQuery<Subprocess>(filters);
-		return this.instance.get(this.baseUrl + '/subprocess', filtersQuery)
+		const data = await this.instance.get<Subprocess>(this.baseUrl + '/subprocess', filtersQuery);
+		return data
 	}
 
 	async getOperationList(filters: Filters<ReferenceOperation>): Promise<Array<ReferenceOperation>> {

@@ -3,17 +3,18 @@ import { Process, Subprocess } from '../../../../../../shared/tnk';
 import { closeModal } from '../../../../helpers/modal.helper';
 import { useToast } from '../../../../helpers/toast.helper';
 import { DictionaryService } from '../../../../api/dictionary';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 import { Filters } from '../../../../config/config';
 import Autocomplete from '../../form/Autocomplete.vue';
 
 const dictionaryService = new DictionaryService();
-const props = defineProps<{subprocess: Subprocess}>();
+const props = defineProps(['subprocess']);
 const emit = defineEmits(['save', 'close']);
 const isLoaded = ref<boolean>(false);
 
 const autoCompleteItems = ref<Array<Process>>([]);
 const currentProcess = ref<string>();
+const subprocessToEdit = ref<any>({});
 
 const save = () => {
 	emit('save');
@@ -41,8 +42,18 @@ onMounted(async () => {
 			currentProcess.value = result[0].title;
 		}
 	}
+
+	subprocessToEdit.value = Object.assign({}, {
+		id: props.subprocess.id,
+		title: props.subprocess.title,
+		code: props.subprocess.code,
+		itsmProcessId: props.subprocess?.itsmProcess?.id,
+		isActive: props.subprocess.isActive,
+		processId: props.subprocess.processId,
+		esppObject: props.subprocess.esppObject,
+	})
 	isLoaded.value = true;
-})
+});
 </script>
 
 <template>
@@ -50,7 +61,7 @@ onMounted(async () => {
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="subprocessModalLabel">{{subprocess.title || 'Добавить подпроцесс'}}</h5>
+					<h5 class="modal-title" id="subprocessModalLabel">{{subprocessToEdit.title || 'Добавить подпроцесс'}}</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="emit('close')"></button>
 				</div>
 				<div class="modal-body">
@@ -62,22 +73,22 @@ onMounted(async () => {
 						</div>
 						<div class="mb-3">
 							<label for="exampleInputEmail1" class="form-label">Название</label>
-							<input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model='subprocess.title'>
+							<input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model='subprocessToEdit.title'>
 						</div>
 						<div class="mb-3">
 							<label for="exampleInputPassword1" class="form-label">Идентификатор</label>
-							<input type="text" class="form-control" id="exampleInputPassword1" v-model='subprocess.code'>
+							<input type="text" class="form-control" id="exampleInputPassword1" v-model='subprocessToEdit.code'>
 						</div>
 						<div class="mb-3">
 							<label for="exampleInputPassword1" class="form-label">ITSM процесс</label>
-							<select class="form-select" aria-label="Default select example" v-model='subprocess.itsmProcessId'>
+							<select class="form-select" aria-label="Default select example" v-model='subprocessToEdit.itsmProcessId'>
 								<option value="1">One</option>
 								<option value="2">Two</option>
 								<option value="3">Three</option>
 							</select>
 						</div>
 						<div class="mb-3 form-check">
-							<input type="checkbox" class="form-check-input" id="exampleCheck1" v-model='subprocess.isActive'>
+							<input type="checkbox" class="form-check-input" id="exampleCheck1" v-model='subprocessToEdit.isActive'>
 							<label class="form-check-label" for="exampleCheck1">Активен</label>
 						</div>
 					</form>

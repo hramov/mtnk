@@ -34,7 +34,11 @@ export class DictionaryController {
 	})
 	@Public()
 	async getSubprocesses(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
-		return this.dictionaryService.getSubprocesses()
+		const data = await this.dictionaryService.getSubprocesses();
+		if (data instanceof Error) {
+			throw data;
+		}
+		return data;
 	}
 
 	@ApiTags('Dictionary')

@@ -39,7 +39,9 @@ export class DictionaryService {
     async getSubprocesses() {
         const result = await this.repository.getSubprocessList();
         if (result instanceof DatabaseError) {
-            return new InternalServerErrorException(result)
+            return new InternalServerErrorException(result.message, {
+                cause: result
+            })
         }
         return result;
     }

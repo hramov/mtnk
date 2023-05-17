@@ -28,11 +28,9 @@ export class PostgresStorage {
 		try {
 			const data = await this.conn.many<T>(sql, values);
 			return data;
-		} catch (err: unknown) {
-			if (err instanceof QueryResultError) {
-				return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
-			}
-			return new DatabaseError();
+		} catch (_err: unknown) {
+			const err = _err as QueryResultError;
+			return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
 		}
 	}
 
@@ -44,11 +42,9 @@ export class PostgresStorage {
 		try {
 			const data = await this.conn.one<T>(sql, values);
 			return data;
-		} catch (err) {
-			if (err instanceof QueryResultError) {
-				return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
-			}
-			return new DatabaseError();
+		} catch (_err: unknown) {
+			const err = _err as QueryResultError;
+			return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
 		}
 	}
 

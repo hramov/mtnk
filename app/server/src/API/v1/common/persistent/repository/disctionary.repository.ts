@@ -50,11 +50,21 @@ export class DictionaryRepository implements IDictionaryRepository {
         return this.storage.query<Process>(sql);
     }
 
-    getSubprocessList(): Promise<Subprocess[] | DatabaseError> {
+    async getSubprocessList(): Promise<Subprocess[] | DatabaseError> {
         const sql = `
-            SELECT * FROM dictionary.subprocess
+            SELECT s.id, s.title, s.code, s."isActive", s."processId", json_build_object('id', i.id, 'title', i.title) as "itsmProcess" FROM dictionary.subprocess s
+            JOIN dictionary."itsmProcess" i on s."itsmProcessId" = i.id
         `;
-        return this.storage.query<Subprocess>(sql);
+        const result = await this.storage.query<Subprocess>(sql);
+
+        if (result instanceof DatabaseError) {
+            this.logger.error(result.message, 'DictionaryRepository', null, {
+                method: 'writeListener'
+            });
+            return result;
+        }
+
+        return result;
     }
 
     getOperationList(): Promise<ReferenceOperation[] | DatabaseError> {

@@ -29,7 +29,7 @@ export class Api {
         }, function (error: any) {
             const statusCode = error.response && error.response.data ? error.response.data.statusCode : undefined;
             useToast('error', 'Ошибка сети', errorFactory(statusCode))
-            return Promise.resolve(error);
+            return Promise.reject(error);
         });
     }
 
