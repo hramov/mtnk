@@ -1,6 +1,4 @@
 import {BaseEntity} from "../../../Shared/src/BaseEntity";
-import {Process} from "./Process";
-import {ApprovalSetup} from "../ValueObject/ApprovalSetup";
 import {ApprovingItem} from "../ValueObject/ApprovingItem";
 
 export type SubprocessConstructor = {
@@ -9,6 +7,7 @@ export type SubprocessConstructor = {
     code: string;
     esppObject: string;
     isActive: boolean;
+    itsmProcessId: number;
     approvalSetup: ApprovingItem[]
 }
 
@@ -18,6 +17,7 @@ export class Subprocess extends BaseEntity<number> {
     public esppObject: string;
     public processId: number;
     public isActive: boolean;
+    itsmProcessId: number;
     public approvalSetup: ApprovingItem[]
 
     constructor(subprocess: SubprocessConstructor) {
@@ -27,6 +27,7 @@ export class Subprocess extends BaseEntity<number> {
         this.esppObject = subprocess.esppObject;
         this.processId = subprocess.processId;
         this.isActive = subprocess.isActive;
+        this.itsmProcessId = subprocess.itsmProcessId;
         this.approvalSetup = subprocess.approvalSetup;
     }
 }

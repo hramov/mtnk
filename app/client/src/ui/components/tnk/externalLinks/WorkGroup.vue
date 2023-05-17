@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AutoComplete from './../../layout/AutoComplete.vue'
+import AutoComplete from '../../form/Autocomplete.vue'
 import {ref} from "vue";
 
 const workGroups = ref<string[]>([]);

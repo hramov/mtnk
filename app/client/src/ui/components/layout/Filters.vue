@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import TitleFilter from "./filters/TitleFilter.vue";
+import { Filters } from '../../../config/config';
 const emit = defineEmits(['filters']);
-
-export type Filters = {
-  [key: string]: string | number
-}
 
 const filters = ref<Filters>({});
 

@@ -43,5 +43,25 @@ export class DictionaryRepository implements IDictionaryRepository {
         return Promise.resolve(undefined);
     }
 
+    async getProcessList(): Promise<Process[] | DatabaseError> {
+        const sql = `
+            SELECT * FROM dictionary.process
+        `;
+        return this.storage.query<Process>(sql);
+    }
+
+    getSubprocessList(): Promise<Subprocess[] | DatabaseError> {
+        const sql = `
+            SELECT * FROM dictionary.subprocess
+        `;
+        return this.storage.query<Subprocess>(sql);
+    }
+
+    getOperationList(): Promise<ReferenceOperation[] | DatabaseError> {
+        const sql = `
+            SELECT * FROM dictionary."referenceOperation"
+        `;
+        return this.storage.query<ReferenceOperation>(sql);
+    }
 
 }

@@ -5,7 +5,7 @@ import {onMounted, ref} from "vue";
 import {TnkService} from "../../../api/tnk";
 import TnkTabs from "../../components/tnk/TnkTabs.vue";
 const route = useRoute();
-const tnk = ref<Tnk>(new Tnk())
+const tnk = ref<Tnk>();
 const tnkId = route.params.id;
 const tnkService = new TnkService();
 

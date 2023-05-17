@@ -14,4 +14,7 @@ export interface IDictionaryRepository extends IBaseRepository {
     addSubprocesses(subprocesses: Subprocess[]): Promise<void | DatabaseError>
     getProcess(processId: number): Promise<Process | DatabaseError>
     getSubprocess(subprocessId: number): Promise<Subprocess | DatabaseError>
+    getProcessList(): Promise<Process[] | DatabaseError>
+    getSubprocessList(): Promise<Subprocess[] | DatabaseError>
+    getOperationList(): Promise<ReferenceOperation[] | DatabaseError>
 }

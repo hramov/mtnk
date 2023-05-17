@@ -69,7 +69,7 @@ export const AppBarItems: Array<ConfigRouterItem> = [
     {
         id: 3,
         title: 'Справочник',
-        name: 'dict',
+        name: 'dictionary',
         children: [
             {
                 id: 1,
@@ -162,4 +162,8 @@ export const MESSAGE_TYPES: MessageTypes = {
         title: 'Информация',
         color: 'blue'
     },
+}
+
+export type Filters<T> = {
+    [key in keyof T]?: T[key];
 }

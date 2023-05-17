@@ -1,6 +1,6 @@
-import {Filters} from "../ui/components/layout/Filters.vue";
 import {Api} from "./api";
 import { Tnk } from './../../../shared/tnk'
+import { Filters } from '../config/config';
 
 export class TnkService {
     private baseUrl = 'tnk';
@@ -10,8 +10,8 @@ export class TnkService {
         this.instance = new Api()
     }
 
-    async getTnkList(filters: Filters): Promise<Array<Tnk>> {
-        const filtersQuery = this.instance.formatFilterQuery(filters);
+    async getTnkList(filters: Filters<Tnk>): Promise<Array<Tnk>> {
+        const filtersQuery = this.instance.formatFilterQuery<Tnk>(filters);
         return this.instance.get(this.baseUrl, filtersQuery)
     }
 

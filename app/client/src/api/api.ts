@@ -1,7 +1,7 @@
-import axios, {AxiosInstance} from "axios";
-import {Filters} from "../ui/components/layout/Filters.vue";
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import {useToast} from "../helpers/toast.helper";
 import {errorFactory} from "../helpers/error.helper";
+import { Filters } from '../config/config';
 
 export class NotFoundError extends Error {
     constructor() {
@@ -33,7 +33,7 @@ export class Api {
         });
     }
 
-    public  async get<T>(url: string, filters?: string): Promise<T[]> {
+    public async get<T>(url: string, filters?: string): Promise<T[]> {
         try {
             const response = await this.instance.get(url + '/' + (filters ? filters : ''));
             return response.data;
@@ -42,20 +42,39 @@ export class Api {
         }
     }
 
-    public async post() {
-
+    public async post<T>(url: string, data: T, opts?: AxiosRequestConfig) {
+        try {
+            const response = await this.instance.post(url, data, opts);
+            return response.data;
+        } catch(_err: unknown) {
+            return null;
+        }
     }
 
-    public async put() {
-
+    public async put<T>(url: string, id: number | string, data: T, opts?: AxiosRequestConfig) {
+        try {
+            const response = await this.instance.put(url + '/' + id, data, opts);
+            return response.data;
+        } catch(_err: unknown) {
+            return null;
+        }
     }
 
-    public async delete() {
-
+    public async delete(url: string, id: number | string,  opts?: AxiosRequestConfig) {
+        try {
+            const response = await this.instance.delete(url + '/' + id, opts);
+            return response.data;
+        } catch(_err: unknown) {
+            return null;
+        }
     }
 
-    public formatFilterQuery(filters: Filters): string {
-        console.log(filters)
-        return ""
+    public formatFilterQuery<T>(filters: Filters<T>): string {
+        const filtersArray: string[] = [];
+
+        for (let key in filters) {
+            filtersArray.push(`${key}=${filters[key]}`)
+        }
+        return `?${filtersArray.join('&')}`
     }
 }

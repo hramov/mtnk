@@ -1,5 +1,4 @@
 import { ConsoleLogger } from './ConsoleLogger';
-import { FileLogger } from './FileLogger';
 import {ILogger} from "../../Core/ICore";
 
 export interface ILoggerWriter {
@@ -15,7 +14,6 @@ export enum LogLevel {
 
 export class Logger implements ILogger {
 	private readonly consoleLogger = new ConsoleLogger();
-	// private readonly fileLogger = new FileLogger();
 
 	constructor(private readonly context: string) {}
 
@@ -24,7 +22,7 @@ export class Logger implements ILogger {
 		const outputs = this.outputFactory(LogLevel.DEBUG);
 
 		for (const output of outputs) {
-			output.write(message);
+			output.write(message).catch((err) => console.error(err));
 		}
 	}
 
@@ -33,7 +31,7 @@ export class Logger implements ILogger {
 		const outputs = this.outputFactory(LogLevel.INFO);
 
 		for (const output of outputs) {
-			output.write(message);
+			output.write(message).catch((err) => console.error(err));
 		}
 	}
 
@@ -42,7 +40,7 @@ export class Logger implements ILogger {
 		const outputs = this.outputFactory(LogLevel.WARN);
 
 		for (const output of outputs) {
-			output.write(message);
+			output.write(message).catch((err) => console.error(err));
 		}
 	}
 
@@ -51,7 +49,7 @@ export class Logger implements ILogger {
 		const outputs = this.outputFactory(LogLevel.ERROR);
 
 		for (const output of outputs) {
-			output.write(message);
+			output.write(message).catch((err) => console.error(err));
 		}
 	}
 
