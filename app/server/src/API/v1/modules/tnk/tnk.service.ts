@@ -66,7 +66,7 @@ export class TnkService {
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
 
-        await tnk.getUserPrivileges();
+        await tnk.getUserPrivileges(userId);
 
         return tnk;
     }

@@ -107,7 +107,7 @@ export class Tnk extends BaseEntity<number>{
         this.history = tnk.history;
     }
 
-    public async getUserPrivileges() {
+    public async getUserPrivileges(userId: string) {
         this.userPrivileges = {};
     }
 
