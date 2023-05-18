@@ -15,8 +15,14 @@ export class TnkService {
         return this.instance.get(this.baseUrl, filtersQuery)
     }
 
-    async getTnk(id: number): Promise<Array<Tnk>> {
-        console.log(id);
+    async getTnk(_: number): Promise<Array<Tnk>> {
         return this.instance.get(this.baseUrl)
+    }
+
+    async saveTnk(tnk: Tnk): Promise<string> {
+        if (tnk.id) {
+            return this.instance.put(this.baseUrl, tnk.id, tnk);
+        }
+        return this.instance.post(this.baseUrl, tnk);
     }
 }

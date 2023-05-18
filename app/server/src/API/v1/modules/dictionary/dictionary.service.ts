@@ -5,7 +5,7 @@ import {IDictionaryRepository} from "../../../../Core/IDictionaryRepository";
 import {Process} from "../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
 import {ReferenceOperation} from "../../../../Core/Tnk/Entity/ReferenceOperation";
-import {DatabaseError} from "../../error/Database.error";
+import {DatabaseError} from "../../../../Core/Error/Database.error";
 import { LOGGER } from '../../common/constants';
 import { UserJWTPayloadDto } from '../user/dto/userJWTPayload.dto';
 

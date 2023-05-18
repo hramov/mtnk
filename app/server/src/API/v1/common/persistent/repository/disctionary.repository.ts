@@ -4,7 +4,7 @@ import {IDictionaryRepository} from "../../../../../Core/IDictionaryRepository";
 import {ReferenceOperation} from "../../../../../Core/Tnk/Entity/ReferenceOperation";
 import {Process} from "../../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
-import {DatabaseError} from "../../../error/Database.error";
+import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
 import { ItsmProcess } from '../../../../../Core/Tnk/Entity/ItsmProcess';
 

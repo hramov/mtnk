@@ -4,7 +4,10 @@ import TnkTable from "../../components/tnk/TnkTable.vue";
 import Pagination from "../../components/layout/Pagination.vue";
 import {TnkService} from "../../../api/tnk";
 import {onMounted, ref} from "vue";
-import { Tnk } from '../../../../../shared/tnk'
+import { Tnk } from '../../../../../shared/tnk';
+import TnkModal from '../../components/tnk/TnkModal.vue';
+import { openModal } from '../../../helpers/modal.helper';
+import { useToast } from '../../../helpers/toast.helper';
 
 const tnkService = new TnkService();
 const filters = ref({});
@@ -14,8 +17,12 @@ const pages = ref(1);
 
 const tnkList = ref<Array<Tnk>>([])
 
+const createTnk = () => {
+	openModal('tnkModal');
+}
+
 const applyFilters = async (filters: Filters) => {
-  tnkList.value = await tnkService.getTnkList(filters)
+  tnkList.value = await tnkService.getTnkList(filters);
 }
 
 const pageChange = (page: number) => {
@@ -24,7 +31,7 @@ const pageChange = (page: number) => {
 
 onMounted(() => {
   tnkService.getTnkList({}).then(data => tnkList.value = data)
-})
+});
 </script>
 
 <template>
@@ -38,9 +45,13 @@ onMounted(() => {
         <span data-feather="calendar"></span>
         Фильтры
       </button>
+		<button type="button" class="btn btn-sm btn-primary" style='margin-left: 8px' @click='createTnk'>
+			Создать
+		</button>
     </div>
   </div>
   <TnkTable :tnk="tnkList"/>
+	<TnkModal />
   <Pagination :pages="pages" @page_change="pageChange"/>
   <Filters @filters="applyFilters"/>
 </template>

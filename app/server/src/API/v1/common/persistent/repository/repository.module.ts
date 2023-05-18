@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import {
 	DICTIONARY_REPOSITORY,
 	PROCESS_REPOSITORY,
-	SUBPROCESS_REPOSITORY,
+	SUBPROCESS_REPOSITORY, TNK_EVENT_REPOSITORY,
 	TNK_REPOSITORY,
-	USER_REPOSITORY
+	USER_REPOSITORY,
 } from './repository.constants';
 import {UserRepository} from "./user.repository";
 import {ILogger} from "../../../../../Core/ICore";
@@ -18,6 +18,7 @@ import {SubprocessRepository} from "./subprocess.repository";
 import {EventBusModule} from "../../eventBus/eventBus.module";
 import {IEventBus} from "../../../../../Core/IEventBus";
 import {TnkEventRepository} from "./event/tnk.repository";
+import { TnkRepository } from './tnk.repository';
 
 @Module({
 	imports: [PostgresModule, LoggerModule, EventBusModule],
@@ -31,6 +32,13 @@ import {TnkEventRepository} from "./event/tnk.repository";
 		},
 		{
 			provide: TNK_REPOSITORY,
+			useFactory: (logger: ILogger, storage: IDatabaseConnection) => {
+				return new TnkRepository(logger, storage)
+			},
+			inject: [LOGGER, POSTGRES_STORAGE],
+		},
+		{
+			provide: TNK_EVENT_REPOSITORY,
 			useFactory: (logger: ILogger, eventBus: IEventBus, storage: IDatabaseConnection) => {
 				return new TnkEventRepository(logger, eventBus, storage)
 			},
@@ -58,6 +66,6 @@ import {TnkEventRepository} from "./event/tnk.repository";
 			inject: [LOGGER, EVENT_BUS, POSTGRES_STORAGE],
 		},
 	],
-	exports: [USER_REPOSITORY, TNK_REPOSITORY, DICTIONARY_REPOSITORY, PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY],
+	exports: [USER_REPOSITORY, TNK_REPOSITORY, TNK_EVENT_REPOSITORY, DICTIONARY_REPOSITORY, PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY],
 })
 export class RepositoryModule {}

@@ -2,7 +2,7 @@ import {ILogger} from "../../../../../Core/ICore";
 import {IDatabaseConnection} from "../IDatabaseConnection";
 import {ISubprocessRepository} from "../../../../../Core/Tnk/Repository/ISubprocessRepository";
 import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
-import {DatabaseError} from "../../../error/Database.error";
+import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class SubprocessRepository implements ISubprocessRepository {

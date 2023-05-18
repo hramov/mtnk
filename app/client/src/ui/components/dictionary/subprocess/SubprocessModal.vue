@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Process, Subprocess } from '../../../../../../shared/tnk';
+import { Process } from '../../../../../../shared/tnk';
 import { closeModal } from '../../../../helpers/modal.helper';
 import { useToast } from '../../../../helpers/toast.helper';
 import { DictionaryService } from '../../../../api/dictionary';
@@ -15,9 +15,10 @@ const isLoaded = ref<boolean>(false);
 const autoCompleteItems = ref<Array<Process>>([]);
 const currentProcess = ref<string>();
 const subprocessToEdit = ref<any>({});
+const itsmProcess = ref<any>([]);
 
 const save = () => {
-	emit('save');
+	emit('save', toRaw(subprocessToEdit.value));
 	closeModal('subprocessModal');
 	useToast('success', 'Успешно', 'Подпроцесс успешно сохранен!')
 }
@@ -30,10 +31,13 @@ const typeahead = async (title: string) => {
 }
 
 const chosen = (process: Process) => {
-	props.subprocess.processId = process.id;
+	subprocessToEdit.value.processId = process.id;
 }
 
 onMounted(async () => {
+
+	itsmProcess.value = await dictionaryService.getItsmProcess();
+
 	if (props.subprocess.processId) {
 		const result = await dictionaryService.getProcessList({
 			id: props.subprocess.processId,
@@ -82,9 +86,7 @@ onMounted(async () => {
 						<div class="mb-3">
 							<label for="exampleInputPassword1" class="form-label">ITSM процесс</label>
 							<select class="form-select" aria-label="Default select example" v-model='subprocessToEdit.itsmProcessId'>
-								<option value="1">One</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
+								<option v-for='p in itsmProcess' :value="p.id">{{ p.title }}</option>
 							</select>
 						</div>
 						<div class="mb-3 form-check">

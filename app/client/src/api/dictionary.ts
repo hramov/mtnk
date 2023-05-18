@@ -26,6 +26,10 @@ export class DictionaryService {
 		return this.instance.get(this.baseUrl + '/operation', filtersQuery)
 	}
 
+	async getItsmProcess() {
+		return this.instance.get(this.baseUrl + '/itsmProcess')
+	}
+
 	async saveSubprocess(subprocess: Subprocess): Promise<number | Error> {
 		let data: any;
 		if (subprocess.id) {

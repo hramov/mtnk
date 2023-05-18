@@ -2,7 +2,7 @@ import {IBaseRepository} from "../Shared/src/IBaseRepository";
 import {ReferenceOperation} from "./Tnk/Entity/ReferenceOperation";
 import {Subprocess} from "./Tnk/Entity/Subprocess";
 import {Process} from "./Tnk/Entity/Process";
-import {DatabaseError} from "../API/v1/error/Database.error";
+import {DatabaseError} from "./Error/Database.error";
 import { ItsmProcess } from './Tnk/Entity/ItsmProcess';
 
 export interface IDictionaryRepository extends IBaseRepository {

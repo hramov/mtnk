@@ -2,7 +2,7 @@ import {ILogger} from "../../../../../Core/ICore";
 import {IDatabaseConnection} from "../IDatabaseConnection";
 import {IProcessRepository, ProcessSearchParams} from "../../../../../Core/Tnk/Repository/IProcessRepository";
 import {Process} from "../../../../../Core/Tnk/Entity/Process";
-import {DatabaseError} from "../../../error/Database.error";
+import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class ProcessRepository implements IProcessRepository {

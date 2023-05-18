@@ -8,7 +8,7 @@ import {Candidate} from "../../../../Core/User/ValueObject/Candidate";
 import {GetUser} from "./user.decorator";
 import {TokenData} from "../../../../Core/User/ValueObject/TokenData";
 import {Public} from "./public.decorator";
-import {DatabaseError} from "../../error/Database.error";
+import {DatabaseError} from "../../../../Core/Error/Database.error";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')

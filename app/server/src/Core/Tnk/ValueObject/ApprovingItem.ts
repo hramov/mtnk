@@ -31,6 +31,12 @@ export class ApprovingItem extends ValueObject {
     }
     protected *getEqualityComponents(): IterableIterator<Object> {
         yield this.tnkId;
+        yield this.groupNum;
+        yield this.userId;
+        yield this.isActive;
+        yield this.isApproved;
+        yield this.comments;
+        yield this.dateCreated;
     }
 
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Subprocess } from '../../../../../shared/tnk';
 import { DictionaryService } from '../../../api/dictionary';
 import { openModal } from '../../../helpers/modal.helper';
 import SubprocessModal from '../../components/dictionary/subprocess/SubprocessModal.vue';
 import Alert from '../../components/layout/Alert.vue';
+import Filters from './../../components/layout/Filters.vue'
 
 const dictionaryService = new DictionaryService();
 
@@ -21,13 +22,20 @@ const openSubprocess = (subprocess: Subprocess) => {
 	openModal('subprocessModal');
 }
 
-const save = async () => {
-	await dictionaryService.saveSubprocess(toRaw<Subprocess>(subprocessToEdit.value as Subprocess));
+const save = async (data: any) => {
+	data.itsmProcess = {
+		id: data.itsmProcessId,
+	}
+	await dictionaryService.saveSubprocess(data);
 	subprocess.value = await dictionaryService.getSubprocessList({});
 }
 
 const close = () => {
 	subprocessToEdit.value = {} as Subprocess;
+}
+
+const applyFilters = () => {
+
 }
 
 </script>
@@ -70,6 +78,8 @@ const close = () => {
 	<Alert v-else type='warning' message='Нет данных'/>
 
 	<SubprocessModal :subprocess='subprocessToEdit' :key='subprocessToEdit.id' @save='save' @close='close'/>
+
+	<Filters @filters="applyFilters"/>
 </template>
 
 <style></style>

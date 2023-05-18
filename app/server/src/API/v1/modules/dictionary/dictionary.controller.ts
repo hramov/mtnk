@@ -92,7 +92,7 @@ export class DictionaryController {
 		return this.dictionaryService.getOperations()
 	}
 
-	@ApiTags('ITSM Process')
+	@ApiTags('Dictionary')
 	@ApiBearerAuth()
 	@Get('/itsmProcess')
 	@ApiOperation({

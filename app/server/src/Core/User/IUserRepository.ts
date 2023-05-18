@@ -1,7 +1,7 @@
 import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
 import {User} from "./User";
 import {Profile} from "./Entity/Profile";
-import {DatabaseError} from "../../API/v1/error/Database.error";
+import {DatabaseError} from "../Error/Database.error";
 import {IBaseRepository} from "../../Shared/src/IBaseRepository";
 
 export interface IUserRepository extends IBaseRepository {

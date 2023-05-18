@@ -1,10 +1,7 @@
 import {Tnk} from "./Tnk";
-import {EventPublisher} from "../../Shared/src/EventSourcing/EventPublisher";
-import {IEventBus} from "../IEventBus";
-import {ILogger} from "../ICore";
+import { ITnkEventRepository } from './Repository/event/ITnkEventRepository';
 
 
-export function tnkFactory(logger: ILogger, eventBus: IEventBus): Tnk {
-    const eventPublisher = new EventPublisher(logger, eventBus);
-    return new Tnk(eventPublisher);
+export function tnkFactory(eventRepository: ITnkEventRepository): Tnk {
+    return new Tnk(eventRepository);
 }

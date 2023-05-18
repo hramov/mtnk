@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { Process } from '../../../../../shared/tnk';
 import { DictionaryService } from '../../../api/dictionary';
 import ProcessModal from '../../components/dictionary/process/ProcessModal.vue';
+import Filters from './../../components/layout/Filters.vue'
 
 const dictionaryService = new DictionaryService();
 
@@ -21,6 +22,10 @@ const openProcess = (process: Process) => {
 
 const save = async () => {
 	process.value = await dictionaryService.getProcessList({});
+}
+
+const applyFilters = () => {
+
 }
 </script>
 
@@ -59,6 +64,7 @@ const save = async () => {
 	</table>
 
 	<ProcessModal :process='processToEdit' v-if='processToEdit' @save='save'/>
+	<Filters @filters="applyFilters"/>
 </template>
 
 <style></style>

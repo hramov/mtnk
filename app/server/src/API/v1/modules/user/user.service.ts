@@ -10,7 +10,7 @@ import {Uuid} from "../../../../Shared/src/ValueObject/Objects/Uuid";
 import {User} from "../../../../Core/User/User";
 import {IUserRepository} from "../../../../Core/User/IUserRepository";
 import {USER_REPOSITORY} from "../../common/persistent/repository/repository.constants";
-import {DatabaseError} from "../../error/Database.error";
+import {DatabaseError} from "../../../../Core/Error/Database.error";
 import { LOGGER } from '../../common/constants';
 
 @Injectable()

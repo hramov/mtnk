@@ -23,7 +23,7 @@ import {WorkGroupDto} from "./dto/workGroup.dto";
 import {OperationDto} from "./dto/operation.dto";
 import {ApprovingDto} from "./dto/approving.dto";
 import { TnkSearchParams } from '../../../../Core/Tnk/ValueObject/TnkSearchParams';
-import { DatabaseError } from '../../error/Database.error';
+import { DatabaseError } from '../../../../Core/Error/Database.error';
 import { WrongTnkStatusError } from '../../../../Core/Tnk/Error/WrongTnkStatusError';
 
 @Controller('tnk')

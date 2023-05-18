@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory, RouteLocationRaw} from 'vue-router';
 import Home from './ui/views/Home.vue'
 import Login from './ui/views/Login.vue'
+import Logout from './ui/views/Logout.vue'
 import {AppBarItems} from "./config/config";
 import {flatten} from 'lodash';
 
@@ -17,7 +18,8 @@ export class ConfigRouterItemChildren {
     url: string;
     name: string;
     component: string;
-    onlyRouter?: boolean
+    divider?: boolean;
+    onlyRouter?: boolean;
 }
 
 export interface VueRouterItem {
@@ -39,15 +41,6 @@ function makeRoutersFromGroup(items: Array<ConfigRouterItem>): Array<VueRouterIt
     )))
 }
 
-// function makeRoutersFromChildren(items: Array<ConfigRouterItemChildren>) {
-//     return flatten(items.map((item: ConfigRouterItemChildren) => ({
-//             path: item.url,
-//             name: item.name,
-//             component: () => import(`./ui/views/${item.name}/${item.component}.vue`),
-//         }
-//     )));
-// }
-
 const homeItems = [
     {
         path: '/',
@@ -58,6 +51,11 @@ const homeItems = [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: Logout
     }
 ]
 

@@ -1,6 +1,6 @@
 import * as pgPromise from 'pg-promise';
 import {IClient} from 'pg-promise/typescript/pg-subset';
-import {DatabaseError} from "../../../../API/v1/error/Database.error";
+import {DatabaseError} from "../../../../Core/Error/Database.error";
 import QueryResultError = pgPromise.errors.QueryResultError;
 
 export interface IPostgresConnOptions {
@@ -34,6 +34,33 @@ export class PostgresStorage {
 		}
 	}
 
+	public async queryTx<T>(
+		sql: string[],
+		values?: any[][],
+		options?: IPostgresQueryOptions,
+	): Promise<T | DatabaseError> {
+
+		if (values) {
+			if (sql.length !== values.length) {
+				return new DatabaseError('Количество запросов не соответствует количеству параметров')
+			}
+		}
+
+		try {
+			const data = await this.conn.tx<T>(async (t) => {
+				let data = null;
+				for (let i = 0; i < sql.length; i++) {
+					data = await t.one<T>(sql[i], values[i])
+				}
+				return data;
+			});
+			return data;
+		} catch (_err: unknown) {
+			const err = _err as QueryResultError;
+			return new DatabaseError(err.message + ' ' + PostgresStorage.cleanErrorMessage(err.query));
+		}
+	}
+
 	public async queryOne<T>(
 		sql: string,
 		values?: any[],
@@ -49,6 +76,7 @@ export class PostgresStorage {
 	}
 
 	private static cleanErrorMessage(message: string) {
+		if (!message) return '';
 		return message.replace(/ +(?= )/g,'').replace(/(\r\n|\n|\r)/gm, "").trim();
 	}
 }

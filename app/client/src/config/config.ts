@@ -23,17 +23,62 @@ export const AppBarItems: Array<ConfigRouterItem> = [
         children: [
             {
                 id: 1,
-                title: 'Пользователи',
+                title: 'Блоки',
                 url: '/users',
                 name: 'users',
                 component: 'Users'
             },
             {
                 id: 2,
+                title: 'Подразделения',
+                url: '/users',
+                name: 'users',
+                component: 'Users'
+            },
+            {
+                id: 3,
                 title: 'Профили',
                 name: 'profiles',
                 url: '/profiles',
                 component: 'Profiles'
+            },
+            {
+                id: 4,
+                title: 'Пользователи',
+                url: '/users',
+                name: 'users',
+                component: 'Users',
+                divider: true,
+            },
+            {
+                id: 5,
+                title: 'Экспорт ТНК',
+                url: '/users',
+                name: 'users',
+                component: 'Users'
+            },
+
+            {
+                id: 6,
+                title: 'Импорт ТНК',
+                url: '/users',
+                name: 'users',
+                component: 'Users'
+            },
+            {
+                id: 7,
+                title: 'Импорт справочников',
+                url: '/users',
+                name: 'users',
+                component: 'Users'
+            },
+            {
+                id: 8,
+                title: 'Аккаунт',
+                url: '/account',
+                name: 'account',
+                component: 'Account',
+                onlyRouter: true,
             }
         ]
     },
@@ -44,14 +89,22 @@ export const AppBarItems: Array<ConfigRouterItem> = [
         children: [
             {
                 id: 1,
-                title: 'ТНК',
+                title: 'ТНК технологического блока',
                 url: '/tnk',
                 name: 'tnk',
                 component: 'Tnk'
             },
             {
+                id: 1,
+                title: 'ТНК инженерного блока',
+                url: '/autoTnk',
+                name: 'autoTnk',
+                component: 'AutoTnk',
+                divider: true,
+            },
+            {
                 id: 2,
-                title: 'ТНК на согласование',
+                title: 'ТНК мне на согласование',
                 url: '/tnk-to-approve',
                 name: 'tnkToApprove',
                 component: 'TnkToApprove'
@@ -84,6 +137,49 @@ export const AppBarItems: Array<ConfigRouterItem> = [
                 url: '/subprocess',
                 name: 'subprocess',
                 component: 'SubprocessList'
+            },
+            {
+                id: 3,
+                title: 'Операции',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList',
+                divider: true,
+            },
+            {
+                id: 4,
+                title: 'Исполнитель операции',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList'
+            },
+            {
+                id: 5,
+                title: 'Единица измерения операции',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList'
+            },
+            {
+                id: 6,
+                title: 'Источник операции',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList'
+            },
+            {
+                id: 7,
+                title: 'Вид ТНК',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList'
+            },
+            {
+                id: 8,
+                title: 'Причина деактивации',
+                url: '/subprocess',
+                name: 'subprocess',
+                component: 'SubprocessList'
             }
         ]
     },
@@ -99,6 +195,13 @@ export const AppBarItems: Array<ConfigRouterItem> = [
                 name: 'about',
                 component: 'About'
             },
+            {
+                id: 2,
+                title: 'Последние изменения',
+                url: '/changes',
+                name: 'changes',
+                component: 'Changes'
+            },
         ]
     },
 ];
@@ -106,22 +209,6 @@ export const AppBarItems: Array<ConfigRouterItem> = [
 export function getChildrenForDisplay(children: Array<ConfigRouterItemChildren>) {
     return children.filter((ch) => !ch.onlyRouter)
 }
-export const UserMenuItems: Array<ConfigRouterItemChildren> = [
-    {
-        id: 1,
-        title: 'Аккаунт',
-        url: '/account',
-        name: 'account',
-        component: 'Account',
-    },
-    {
-        id: 2,
-        title: 'Выход',
-        url: '/logout',
-        name: 'logout',
-        component: 'Logout',
-    }
-];
 
 export const enum AlertTypes {
     Primary = 'primary',

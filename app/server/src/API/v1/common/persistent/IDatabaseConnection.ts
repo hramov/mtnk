@@ -1,5 +1,5 @@
 import {IPostgresQueryOptions} from "../../../../Infrastructure/Persistent/Storage/Postgres/Postgres.storage";
-import {DatabaseError} from "../../error/Database.error";
+import {DatabaseError} from "../../../../Core/Error/Database.error";
 
 export interface IDatabaseConnection {
     query: <T>(
@@ -13,4 +13,10 @@ export interface IDatabaseConnection {
         values?: any[],
         options?: IPostgresQueryOptions,
     ) => Promise<T | DatabaseError>
+
+    queryTx: <T>(
+        sql: string[],
+        values?: any[][],
+        options?: IPostgresQueryOptions,
+    ) => Promise<any | DatabaseError>
 }

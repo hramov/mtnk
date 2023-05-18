@@ -4,7 +4,7 @@ import {IUserRepository} from "../../../../../Core/User/IUserRepository";
 import {User} from "../../../../../Core/User/User";
 import {Profile} from "../../../../../Core/User/Entity/Profile";
 import {Uuid} from "../../../../../Shared/src/ValueObject/Objects/Uuid";
-import {DatabaseError} from "../../../error/Database.error";
+import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
 
 export class UserRepository implements IUserRepository {
