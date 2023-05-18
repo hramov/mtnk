@@ -19,9 +19,10 @@ import { ApprovingItem } from '../../../../../../Core/Tnk/ValueObject/ApprovingI
 import { TnkApprovedByApprover } from '../../../../../../Core/Tnk/Events/TnkApprovedByApprover';
 import { ApproverAdded } from '../../../../../../Core/Tnk/Events/ApproverAdded';
 import { ITnkEventRepository, TnkEvents } from '../../../../../../Core/Tnk/Repository/event/ITnkEventRepository';
+import { IPostgresQueryOptions } from '../../IPostgresQueryOptions';
 
 export class TnkEventRepository implements ITnkEventRepository {
-    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {}
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {}
 
     writeListener() {
         this.eventBus.on('tnk-event', async (event: TnkEvents) => {

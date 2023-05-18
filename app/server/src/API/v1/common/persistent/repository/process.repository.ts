@@ -4,10 +4,11 @@ import {IProcessRepository, ProcessSearchParams} from "../../../../../Core/Tnk/R
 import {Process} from "../../../../../Core/Tnk/Entity/Process";
 import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
+import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 
 export class ProcessRepository implements IProcessRepository {
 
-    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {}
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {}
 
     create(dto: Process): Promise<Process | DatabaseError> {
         return Promise.resolve(undefined);

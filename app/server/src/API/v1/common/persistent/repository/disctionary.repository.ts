@@ -7,9 +7,10 @@ import {Subprocess} from "../../../../../Core/Tnk/Entity/Subprocess";
 import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
 import { ItsmProcess } from '../../../../../Core/Tnk/Entity/ItsmProcess';
+import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 
 export class DictionaryRepository implements IDictionaryRepository {
-    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {}
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {}
 
     addProcesses(processes: Process[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);

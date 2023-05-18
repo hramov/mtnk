@@ -5,9 +5,10 @@ import { Tnk, TnkConstructor } from '../../../../../Core/Tnk/Tnk';
 import { DatabaseError } from '../../../../../Core/Error/Database.error';
 import { TnkSearchParams } from '../../../../../Core/Tnk/ValueObject/TnkSearchParams';
 import { Ip } from '../../../../../Shared/src/ValueObject/Objects/Ip';
+import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 
 export class TnkRepository implements ITnkRepository {
-	constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection) {
+	constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {
 	}
 
 	find(searchParams: TnkSearchParams): Promise<Tnk[] | DatabaseError> {

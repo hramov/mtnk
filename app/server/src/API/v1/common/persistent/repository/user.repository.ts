@@ -6,9 +6,10 @@ import {Profile} from "../../../../../Core/User/Entity/Profile";
 import {Uuid} from "../../../../../Shared/src/ValueObject/Objects/Uuid";
 import {DatabaseError} from "../../../../../Core/Error/Database.error";
 import {IEventBus} from "../../../../../Core/IEventBus";
+import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 
 export class UserRepository implements IUserRepository {
-    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection) {
+    constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {
     }
 
     async getUserByUsername(username: string): Promise<User | DatabaseError> {

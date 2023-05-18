@@ -4,8 +4,8 @@ import {ref} from "vue";
 import Alert from '../../layout/Alert.vue';
 import { AihService } from '../../../../api/aih';
 import { ConfigItem} from './../../../../../../shared/tnk';
-
-const props = defineProps(['configItems'])
+const emit = defineEmits(['update']);
+const props = defineProps(['configItems']);
 const aihService = new AihService();
 
 const configItems = ref<ConfigItem[]>([]);

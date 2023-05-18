@@ -3,7 +3,7 @@ import TnkForm from "./TnkForm.vue";
 import ExternalLinks from "./ExternalLinks.vue";
 import Approving from "./Approving.vue";
 import {ref} from "vue";
-
+const emit = defineEmits(['update'])
 const props = defineProps(['tnk'])
 const tab = ref<string>('default');
 
@@ -35,7 +35,7 @@ const isActiveTab = (currentTab: string) => tab.value === currentTab;
   </ul>
 
   <div class="data-body">
-    <component :is="tabs[tab]" :tnk="props.tnk"></component>
+    <component :is="tabs[tab]" :tnk="props.tnk" @update="emit('update')"></component>
   </div>
 </template>
 

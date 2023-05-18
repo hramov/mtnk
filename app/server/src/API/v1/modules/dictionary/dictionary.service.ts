@@ -2,9 +2,7 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import {ILogger} from "../../../../Core/ICore";
 import {DICTIONARY_REPOSITORY} from "../../common/persistent/repository/repository.constants";
 import {IDictionaryRepository} from "../../../../Core/IDictionaryRepository";
-import {Process} from "../../../../Core/Tnk/Entity/Process";
 import {Subprocess} from "../../../../Core/Tnk/Entity/Subprocess";
-import {ReferenceOperation} from "../../../../Core/Tnk/Entity/ReferenceOperation";
 import {DatabaseError} from "../../../../Core/Error/Database.error";
 import { LOGGER } from '../../common/constants';
 import { UserJWTPayloadDto } from '../user/dto/userJWTPayload.dto';

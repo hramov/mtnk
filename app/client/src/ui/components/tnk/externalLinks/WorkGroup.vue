@@ -7,6 +7,7 @@ import { useRoute } from 'vue-router';
 import { TnkService } from '../../../../api/tnk';
 import { useToast } from '../../../../helpers/toast.helper';
 const props = defineProps(['workGroups']);
+const emit = defineEmits(['update']);
 const route = useRoute();
 const tnkService = new TnkService();
 
@@ -31,9 +32,10 @@ const chosen = async (wg: any) => {
 		title: wg.title,
 	}
 
-	const result = await tnkService.addWorkGroup(wg);
+	const result = await tnkService.addWorkGroup(newWg);
 	if (result) {
-		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' добавлена')
+		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' добавлена');
+		emit('update');
 	}
 }
 
@@ -43,7 +45,8 @@ const deleteWg = async (wg: any) => {
 
 	const result = await tnkService.removeWorkGroup(wg);
 	if (result) {
-		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' удалена')
+		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' удалена');
+		emit('update')
 	}
 }
 </script>

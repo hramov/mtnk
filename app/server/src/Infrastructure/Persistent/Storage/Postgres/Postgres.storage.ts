@@ -2,6 +2,8 @@ import * as pgPromise from 'pg-promise';
 import {IClient} from 'pg-promise/typescript/pg-subset';
 import {DatabaseError} from "../../../../Core/Error/Database.error";
 import QueryResultError = pgPromise.errors.QueryResultError;
+import { IDatabaseConnection } from '../../../../API/v1/common/persistent/IDatabaseConnection';
+import { IPostgresQueryOptions } from '../../../../API/v1/common/persistent/IPostgresQueryOptions';
 
 export interface IPostgresConnOptions {
 	host: string;
@@ -11,9 +13,7 @@ export interface IPostgresConnOptions {
 	password: string;
 }
 
-export interface IPostgresQueryOptions {}
-
-export class PostgresStorage {
+export class PostgresStorage implements IDatabaseConnection<IPostgresQueryOptions> {
 	private readonly conn: pgPromise.IDatabase<IClient>;
 
 	constructor(connOptions: IPostgresConnOptions) {

@@ -12,6 +12,9 @@ const tnkService = new TnkService();
 
 tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
 
+const update = async () => {
+	tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
+}
 </script>
 
 <template>
@@ -30,6 +33,6 @@ tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
     </div>
   </div>
   <div class="tnk">
-    <TnkTabs :tnk="tnk" v-if='tnk'/>
+    <TnkTabs :tnk="tnk" v-if='tnk' @update='update'/>
   </div>
 </template>
