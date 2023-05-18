@@ -50,10 +50,10 @@ onMounted(() => {
 		</button>
     </div>
   </div>
-  <TnkTable :tnk="tnkList"/>
-	<TnkModal />
+  <TnkTable :tnk="tnkList" />
   <Pagination :pages="pages" @page_change="pageChange"/>
   <Filters @filters="applyFilters"/>
+	<TnkModal />
 </template>
 
 <style>

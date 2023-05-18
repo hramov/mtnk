@@ -57,9 +57,17 @@ export class TnkService {
     }
 
     async getById(tnkId: string, userId: string) {
-        const tnk = await this.tnkEventRepository.getByAggregateId(tnkId);
+        const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
 
-        // TODO add user privileges
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.tnkEventRepository);
+        tnk.load(currentTnk);
+
+        await tnk.getUserPrivileges();
+
         return tnk;
     }
 
@@ -173,6 +181,64 @@ export class TnkService {
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
         return tnk.addOperation(new Operation({
+            tnkId: tnkId,
+            referenceOperationId: dto.referenceOperationId,
+            amount: dto.amount,
+            title: dto.title,
+            sortOrder: dto.sortOrder,
+            assignee: dto.assignee
+        }), tnkId, userId, userIp);
+    }
+
+    async removeConfigItem(dto: ConfigItemDto, tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.tnkEventRepository);
+        tnk.load(currentTnk);
+        return tnk.removeConfigItem(new ConfigItem(tnkId, dto.title), tnkId, userId, userIp);
+    }
+
+    async removeWorkGroup(dto: WorkGroupDto, tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.tnkEventRepository);
+        tnk.load(currentTnk);
+        return tnk.removeWorkGroup(new WorkGroup(tnkId, dto.title), tnkId, userId, userIp);
+    }
+
+    async updateOperation(dto: OperationDto, tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.tnkEventRepository);
+        tnk.load(currentTnk);
+        return tnk.updateOperation(new Operation({
+            tnkId: tnkId,
+            referenceOperationId: dto.referenceOperationId,
+            amount: dto.amount,
+            title: dto.title,
+            sortOrder: dto.sortOrder,
+            assignee: dto.assignee
+        }), tnkId, userId, userIp);
+    }
+
+    async removeOperation(dto: OperationDto, tnkId: string, userId: string, userIp: Ip) {
+        const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
+        if (currentTnk instanceof DatabaseError) {
+            return currentTnk;
+        }
+
+        const tnk = tnkFactory(this.tnkEventRepository);
+        tnk.load(currentTnk);
+        return tnk.removeOperation(new Operation({
             tnkId: tnkId,
             referenceOperationId: dto.referenceOperationId,
             amount: dto.amount,

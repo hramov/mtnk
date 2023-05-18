@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { Tnk } from '../../../../../shared/tnk'
 import {useRoute} from "vue-router";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {TnkService} from "../../../api/tnk";
 import TnkTabs from "../../components/tnk/TnkTabs.vue";
+
 const route = useRoute();
 const tnk = ref<Tnk>();
 const tnkId = route.params.id;
 const tnkService = new TnkService();
 
-onMounted(() => {
-  tnkService.getTnk(Number(tnkId)).then(data => tnk.value = data[0])
-})
+tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
 
 </script>
 
 <template>
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3" v-if='tnk'>
     <h1 class="h2">{{  tnk.title }}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
       <div class="dropdown">
@@ -31,27 +30,6 @@ onMounted(() => {
     </div>
   </div>
   <div class="tnk">
-    <TnkTabs :tnk="tnk"/>
-
-    <div class="action-buttons">
-      <button class="btn btn-success">Сохранить</button>
-      <button class="btn btn-warning">Сбросить</button>
-    </div>
+    <TnkTabs :tnk="tnk" v-if='tnk'/>
   </div>
 </template>
-
-<style>
-.tnk {
-  /*display: flex;*/
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-.action-buttons > * {
-  margin-left: 10px;
-}
-</style>

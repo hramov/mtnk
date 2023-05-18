@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 const emit = defineEmits(['chosen', 'typeahead']);
-const props = defineProps(['placeholder', 'items', 'value']);
+const props = defineProps(['items', 'value']);
 
 const text = ref<string>('')
 const valuesShowing = ref<{id: number, title: string}[]>([]);

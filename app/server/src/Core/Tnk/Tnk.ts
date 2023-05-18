@@ -32,6 +32,10 @@ import { OperationIsAlreadyInListError } from './Error/OperationIsAlreadyInListE
 import { ApproverIsAlreadyInListError } from './Error/ApproverIsAlreadyInListError';
 import { ApprovingQueueIsEmptyError } from './Error/ApprovingQueueIsEmptyError';
 import { ApproverIsNotInQueueError } from './Error/ApproverIsNotInQueueError';
+import { ConfigItemRemoved } from './Events/ConfigItemRemoved';
+import { WorkGroupRemoved } from './Events/WorkGroupRemoved';
+import { OperationRemoved } from './Events/OperationRemoved';
+import { OperationUpdated } from './Events/OperationUpdated';
 
 export type TnkConstructor = {
     title: string;
@@ -54,6 +58,8 @@ export type TnkConstructor = {
     dateCreated?: Date;
     lastUpdated?: Date;
     lastUpdatedBy?: string;
+    timeline?: any[];
+    userPrivileges?: any;
 }
 
 export class Tnk extends BaseEntity<number>{
@@ -72,6 +78,7 @@ export class Tnk extends BaseEntity<number>{
     public workGroups: WorkGroup[];
     public operations: Operation[];
     public history: History[];
+    public userPrivileges: any;
 
     constructor(private readonly eventRepository: ITnkEventRepository) {
         super();
@@ -98,6 +105,10 @@ export class Tnk extends BaseEntity<number>{
         this.workGroups = tnk.workGroups;
         this.operations = tnk.operations;
         this.history = tnk.history;
+    }
+
+    public async getUserPrivileges() {
+        this.userPrivileges = {};
     }
 
     public async create(userId: string, userIp: Ip, approvalSetup: ApprovingItem[]) {
@@ -202,6 +213,72 @@ export class Tnk extends BaseEntity<number>{
         }
 
         const event = new OperationAdded(userId, userIp, operation, tnkId);
+        return this.eventRepository.writeEvent(event);
+    }
+
+    public async removeConfigItem(configItem: ConfigItem, tnkId: string, userId: string, userIp: Ip) {
+        let counter = 0;
+        if (this.configItems) {
+            for (const ci of this.configItems) {
+                if (ci.equals(configItem)) {
+                    counter++
+                }
+            }
+        }
+
+        if (counter !== 1) {
+            return new Error();
+        }
+
+        const event = new ConfigItemRemoved(userId, userIp, configItem, tnkId);
+        return this.eventRepository.writeEvent(event);
+    }
+
+    public async removeWorkGroup(workGroup: WorkGroup, tnkId: string, userId: string, userIp: Ip) {
+        let counter = 0;
+        for (const wg of this.workGroups) {
+            if (wg.equals(workGroup)) {
+                return new WorkGroupIsAlreadyInListError();
+            }
+        }
+
+        if (counter !== 1) {
+            return new Error();
+        }
+
+        const event = new WorkGroupRemoved(userId, userIp, workGroup, tnkId);
+        return this.eventRepository.writeEvent(event);
+    }
+
+    public async updateOperation(operation: Operation, tnkId: string, userId: string, userIp: Ip) {
+        let counter = 0;
+        for (const op of this.operations) {
+            if (op.equals(operation)) {
+                return new OperationIsAlreadyInListError();
+            }
+        }
+
+        if (counter !== 1) {
+            return new Error();
+        }
+
+        const event = new OperationUpdated(userId, userIp, operation, tnkId);
+        return this.eventRepository.writeEvent(event);
+    }
+
+    public async removeOperation(operation: Operation, tnkId: string, userId: string, userIp: Ip) {
+        let counter = 0;
+        for (const op of this.operations) {
+            if (op.equals(operation)) {
+                return new OperationIsAlreadyInListError();
+            }
+        }
+
+        if (counter !== 1) {
+            return new Error();
+        }
+
+        const event = new OperationRemoved(userId, userIp, operation, tnkId);
         return this.eventRepository.writeEvent(event);
     }
 

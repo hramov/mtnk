@@ -1,7 +1,7 @@
 import {
     BadRequestException,
     Body,
-    Controller,
+    Controller, Delete,
     Get,
     InternalServerErrorException,
     Param,
@@ -124,7 +124,7 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/ci')
+    @Post('/:id/ci')
     @ApiOperation({
         summary: 'Add config item'
     })
@@ -146,9 +146,31 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/wg')
+    @Delete('/:id/ci')
     @ApiOperation({
-        summary: 'Add config item'
+        summary: 'Remove config item'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async removeConfigItem(@GetUser() user: UserJWTPayloadDto, @Body() configItem: ConfigItemDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.removeConfigItem(configItem, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiTags('Tnk')
+    @ApiBearerAuth()
+    @Post('/:id/wg')
+    @ApiOperation({
+        summary: 'Add work group'
     })
     @ApiResponse({
         status: 200,
@@ -168,15 +190,81 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/operation')
+    @Delete('/:id/wg')
     @ApiOperation({
-        summary: 'Add config item'
+        summary: 'Remove work group'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async removeWorkGroup(@GetUser() user: UserJWTPayloadDto, @Body() workGroup: WorkGroupDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.removeWorkGroup(workGroup, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiTags('Tnk')
+    @ApiBearerAuth()
+    @Post('/:id/operation')
+    @ApiOperation({
+        summary: 'Add operation'
     })
     @ApiResponse({
         status: 200,
     })
     @Public()
     async addOperation(@GetUser() user: UserJWTPayloadDto, @Body() operation: OperationDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.removeOperation(operation, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiTags('Tnk')
+    @ApiBearerAuth()
+    @Put('/:id/operation')
+    @ApiOperation({
+        summary: 'Update operation'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async updateOperation(@GetUser() user: UserJWTPayloadDto, @Body() operation: OperationDto, @Param('id') tnkId: string) {
+        if (!user || !user.userId || !user.userIp) {
+            user = {
+                userId: 'USER-123',
+                userIp: new Ip('127.0.0.1'),
+                username: 'admin',
+                role: 'admin'
+            }
+        }
+        return this.tnkService.addOperation(operation, tnkId, user.userId, user.userIp)
+    }
+
+    @ApiTags('Tnk')
+    @ApiBearerAuth()
+    @Delete('/:id/operation')
+    @ApiOperation({
+        summary: 'Remove operation'
+    })
+    @ApiResponse({
+        status: 200,
+    })
+    @Public()
+    async removeOperation(@GetUser() user: UserJWTPayloadDto, @Body() operation: OperationDto, @Param('id') tnkId: string) {
         if (!user || !user.userId || !user.userIp) {
             user = {
                 userId: 'USER-123',

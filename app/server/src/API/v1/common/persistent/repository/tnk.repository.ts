@@ -11,11 +11,23 @@ export class TnkRepository implements ITnkRepository {
 	}
 
 	find(searchParams: TnkSearchParams): Promise<Tnk[] | DatabaseError> {
-		return Promise.resolve(undefined);
-	}
+		const sql = `
+			SELECT t.id, t.title, t."tnkId", 
+			    json_build_object('id', p.id, 'title', p.title) process,
+                json_build_object('id', s.id, 'title', s.title) subprocess,
+                json_build_object('id', st.code, 'title', st.title) status
+			FROM report.tnk t
+			JOIN dictionary.process p on t."processId" = p.id
+			JOIN dictionary.subprocess s on t."subprocessId" = s.id
+			JOIN dictionary.status st on t."statusId" = st.code
+			LIMIT $1 OFFSET $2
+		`;
+		const params = [
+			searchParams.limit,
+			searchParams.offset
+		];
 
-	findOne(tnkId: number): Promise<Tnk | DatabaseError> {
-		return Promise.resolve(undefined);
+		return this.storage.query<Tnk>(sql, params);
 	}
 
 	async create(dto: any, userId: string, userIp: Ip): Promise<{ id: number } | DatabaseError> {

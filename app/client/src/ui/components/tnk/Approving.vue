@@ -1,37 +1,53 @@
 <script setup lang="ts">
-const props = defineProps(['approving'])
+const props = defineProps(['tnk'])
 </script>
 
 <template>
   <div class="approving">
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Номер</th>
-        <th scope="col">Операция по процессу ОД</th>
-        <th scope="col">Измеритель</th>
-        <th scope="col">Операция ЦОТЭН</th>
-        <th scope="col">Длительность</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="a in props.approving" :key="a.id" style="cursor:pointer;">
-        <td>{{ a.id }}</td>
-        <td>{{ a.title }}</td>
-      </tr>
-      </tbody>
-    </table>
 
-    <div>
-      <label>История изменений</label>
-      <ul class="list-group">
-        <li class="list-group-item">An item</li>
-        <li class="list-group-item">A second item</li>
-        <li class="list-group-item">A third item</li>
-        <li class="list-group-item">A fourth item</li>
-        <li class="list-group-item">And a fifth one</li>
-      </ul>
-    </div>
+	  <div>
+		  <h4>Согласование</h4>
+		<table class="table table-hover">
+		  <thead>
+			  <tr>
+				<th scope="col">Очередь</th>
+				<th scope="col">Пользователь</th>
+				<th scope="col">Результат</th>
+				<th scope="col">Дата</th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			  <tr v-for="a in tnk.approvalQueue" :key="a.id" style="cursor:pointer;">
+				<td>{{ a.groupNum }}</td>
+				<td>{{ a.userId }}</td>
+				<td>{{ a.isApproved }}</td>
+				<td>{{ a.isApproved !== null ? new Date(a.dateCreated).toLocaleString('ru-RU') : '' }}</td>
+			  </tr>
+		  </tbody>
+		</table>
+	  </div>
+
+	  <div>
+		  <h4>История изменений</h4>
+	  <table class="table table-hover">
+		  <thead>
+		  <tr>
+			  <th scope="col">Событие</th>
+			  <th scope="col">Пользователь</th>
+			  <th scope="col">IP</th>
+			  <th scope="col">Дата</th>
+		  </tr>
+		  </thead>
+		  <tbody>
+		  <tr v-for="item in tnk.history" :key="item.title" style="cursor:pointer;">
+			  <td>{{ item.title }}</td>
+			  <td>{{ item.userId }}</td>
+			  <td>{{ item.userIp }}</td>
+			  <td>{{ new Date(item.dt).toLocaleString('ru-RU') }}</td>
+		  </tr>
+		  </tbody>
+	  </table>
+	  </div>
   </div>
 </template>
 
@@ -42,11 +58,7 @@ const props = defineProps(['approving'])
   align-items: flex-start;
 }
 
-.approving > table {
-  width: 60%;
-}
-
 .approving > div {
-  width: 35%;
+  width: 45%;
 }
 </style>

@@ -39,4 +39,17 @@ export class DictionaryService {
 		}
 		return data.id;
 	}
+
+	async getTnkTypes() {
+		return [
+			{
+				id: 1,
+				title: 'общий'
+			},
+			{
+				id: 2,
+				title: 'детализация до ситуации'
+			}
+		]
+	}
 }

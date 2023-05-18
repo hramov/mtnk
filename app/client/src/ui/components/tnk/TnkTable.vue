@@ -24,11 +24,11 @@ const props = defineProps<TnkTableProps>()
     </tr>
     </thead>
     <tbody>
-    <tr class='clickable' v-for="t in props.tnk" :key="t.id" @click="openLink('/tnk/' + t.id)">
+    <tr class='clickable' v-for="t in props.tnk" :key="t.id" @click="openLink('/tnk/' + t.tnkId)">
       <td>{{ t.title }}</td>
       <td>{{ t.process.title }}</td>
       <td>{{ t.subprocess.title }}</td>
-      <td>{{ t.statusId }}</td>
+      <td>{{ t.status.title }}</td>
     </tr>
     </tbody>
   </table>

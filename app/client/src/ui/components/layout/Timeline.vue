@@ -6,7 +6,7 @@ type TimelineProps = {
   timelines: Array<{
     title: string;
     color: string;
-    date: string;
+    dt: string;
     message?: string
   }>;
 }
@@ -19,7 +19,7 @@ const props = defineProps<TimelineProps>();
     <ul class="timeline" v-if="props.timelines">
       <li class="timeline-item mb-5" v-for="tl in props.timelines" :key="tl.title">
         <h6>{{ tl.title }}</h6>
-        <p class="text-muted mb-2 fw-bold">{{ new Date(tl.date) ? new Date(tl.date).toLocaleDateString('ru-RU') : 'Нет даты'}}</p>
+        <p class="text-muted mb-2 fw-bold">{{ new Date(tl.dt) ? new Date(tl.dt).toLocaleDateString('ru-RU') : 'Нет даты'}}</p>
         <p class="text-muted">
           {{ tl.message}}
         </p>
