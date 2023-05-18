@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ReferenceOperation} from '../../../../../../shared/tnk';
+import OperationModal from '../OperationModal.vue';
+import { openModal } from '../../../../helpers/modal.helper';
 
 const props = defineProps(['operations']);
 
 const editOperation = (operation: ReferenceOperation) => {
-
+	openModal('operationModal')
 }
 const calcSum = () => {
   if (props.operations) {
@@ -42,6 +44,7 @@ const calcSum = () => {
     </tr>
     </tbody>
   </table>
+	<OperationModal />
 </template>
 
 <style></style>
