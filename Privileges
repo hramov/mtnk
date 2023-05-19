@@ -1,0 +1,50 @@
+Role model
+-----------
+TNK
+[ ] - Search | Admin / Block admin / Dept admin / User with linked profile
+[ ] - Show | Admin / Block admin / Dept admin / User with linked profile
+[ ] - Create | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Update | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Add work group | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Remove work group | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Add config item | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Remove config item | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Add operation | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Update operation | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Remove operation | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Move to approving | Admin / Block admin / Dept admin / Creator with linked profile
+[ ] - Approve | Approver with linked profile and in approval queue
+[ ] - Decline | Approver with linked profile and in approval queue
+[ ] - Move to confirmation | Last approver with linked profile and in approval queue
+[ ] - Confirm | Tnk committee
+[ ] - Withdraw | Admin / Block admin / Dept admin / Creator with linked profile
+
+BLOCK
+[ ] - Search | Admin
+[ ] - Show | Admin
+[ ] - Create | Admin
+[ ] - Update | Admin
+
+DEPT
+[ ] - Search | Admin / Block admin
+[ ] - Show | Admin / Block admin
+[ ] - Create | Admin / Block admin
+[ ] - Update | Admin / Block admin
+[ ] - Link to block | Admin / Block admin
+
+PROFILE
+[ ] - Search | Admin / Block admin / Dept admin
+[ ] - Show | Admin / Block admin / Dept admin
+[ ] - Create | Admin / Block admin / Dept admin
+[ ] - Update | Admin / Block admin / Dept admin
+[ ] - Link to block | Admin / Block admin / Dept admin
+[ ] - Link to subprocess | Admin / Block admin / Dept admin
+
+USER
+[ ] - Search | Admin / Block admin / Dept admin / User
+[ ] - Show | Admin / Block admin / Dept admin / User
+[ ] - Create | Admin / Block admin / Dept admin
+[ ] - Update | Admin / Block admin / Dept admin
+[ ] - Update username | Admin / Block admin / Dept admin
+[ ] - Change password | User
+[ ] - Reset password | Admin / Block admin / Dept admin

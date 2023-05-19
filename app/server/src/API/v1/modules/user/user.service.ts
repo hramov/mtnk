@@ -4,32 +4,31 @@ import {LoginOrPasswordIncorrectError} from "../../../../Core/User/Error/LoginOr
 import {compare} from "bcrypt";
 import {ILogger} from "../../../../Core/ICore";
 import {JwtService} from "@nestjs/jwt";
-import {Token} from "../../../../Core/User/Entity/Token";
+import {Token} from "../../../../Core/User/ValueObject/Token";
 import {GenerateTokenError} from "../../../../Core/User/Error/GenerateToken.error";
-import {Uuid} from "../../../../Shared/src/ValueObject/Objects/Uuid";
-import {User} from "../../../../Core/User/User";
+import { UserConstructor } from '../../../../Core/User/User';
 import {IUserRepository} from "../../../../Core/User/IUserRepository";
-import {USER_REPOSITORY} from "../../common/persistent/repository/repository.constants";
+import { USER_EVENT_REPOSITORY, USER_REPOSITORY } from '../../common/persistent/repository/repository.constants';
 import {DatabaseError} from "../../../../Core/Error/Database.error";
 import { LOGGER } from '../../common/constants';
+import { IUserEventRepository } from '../../../../Core/User/Repository/event/IUserEventRepository';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly jwtService: JwtService,
         @Inject(LOGGER) private readonly logger: ILogger,
+        @Inject(USER_EVENT_REPOSITORY) private readonly eventRepository: IUserEventRepository,
         @Inject(USER_REPOSITORY) private readonly repository: IUserRepository
     ) {}
 
     public async login(dto: Candidate): Promise<Token | Error> {
-        const user = await this.repository.getUserByUsername(dto.username);
-        if (user instanceof DatabaseError) {
-            return user;
+        const userData = await this.repository.getUserForLogin(dto.username);
+        if (userData instanceof DatabaseError) {
+            return userData;
         }
 
-        const loginData = user.getUserForLogin();
-
-        const passwordsEqual = await compare(dto.plainPassword, loginData.password.toString())
+        const passwordsEqual = await compare(dto.plainPassword, userData.hashedPassword)
 
         if (!passwordsEqual) {
             this.logger.log(
@@ -42,13 +41,19 @@ export class UserService {
             return new LoginOrPasswordIncorrectError()
         }
 
-        const token = new Token()
+        const user = await this.eventRepository.getByAggregateId(userData.userId);
+        if (user instanceof DatabaseError) {
+            return user;
+        }
+
+
+        const token = new Token();
 
         try {
             token.accessToken = await this.jwtService.signAsync({
-                userId: loginData.id,
-                username: loginData.username,
-                role: loginData.role,
+                userId: user.userId,
+                username: user.username,
+                role: user.profile.role,
             });
         } catch(err) {
             this.logger.log(
@@ -71,11 +76,7 @@ export class UserService {
         return token;
     }
 
-    public async getUserInfo(userId: Uuid): Promise<User | Error > {
-        const user = await this.repository.getUserById(userId);
-        if (user instanceof Error) {
-            return user;
-        }
-        return user.getUserInfo();
+    public async getUserInfo(userId: string): Promise<UserConstructor | Error > {
+        return this.eventRepository.getByAggregateId(userId);
     }
 }

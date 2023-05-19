@@ -3,9 +3,11 @@ import TnkForm from "./TnkForm.vue";
 import ExternalLinks from "./ExternalLinks.vue";
 import Approving from "./Approving.vue";
 import {ref} from "vue";
-const emit = defineEmits(['update'])
-const props = defineProps(['tnk'])
-const tab = ref<string>('default');
+const emit = defineEmits(['update']);
+const props = defineProps(['tnk']);
+
+const storedTab = localStorage.getItem('tnk-current-tab');
+const tab = ref<string>(storedTab || 'default');
 
 const tabs = {
   'default': TnkForm,
@@ -15,6 +17,7 @@ const tabs = {
 
 const open = (newTab: string) => {
   tab.value = newTab;
+  localStorage.setItem('tnk-current-tab', newTab)
 }
 
 const isActiveTab = (currentTab: string) => tab.value === currentTab;

@@ -2,11 +2,15 @@
 import { Process, Subprocess} from './../../../../../shared/tnk';
 import Autocomplete from './../form/Autocomplete.vue';
 import Timeline from './../layout/Timeline.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, toRaw } from 'vue';
 import { DictionaryService } from '../../../api/dictionary';
+import { TnkService } from '../../../api/tnk';
+import { useToast } from '../../../helpers/toast.helper';
 const props = defineProps(['tnk']);
-
+const emit = defineEmits(['update']);
 const dictionaryService = new DictionaryService();
+const tnkService = new TnkService();
+
 const tnkTypes = ref<{id: number, title: string}[]>([]);
 
 const currentProcess = ref(props.tnk.process.title);
@@ -20,32 +24,75 @@ const typeaheadSubprocess = () => {}
 const chosenSubprocess = () => {}
 
 const model = reactive({
+	id: props.tnk.tnkId,
 	title: props.tnk.title,
-	processId: props.tnk.process.id,
-	subprocess: props.tnk.subprocess.id,
+	process: props.tnk.process,
+	subprocess: props.tnk.subprocess,
 	isActive: props.tnk.isActive,
 	isDigital: props.tnk.isDigital,
 	isAutomated: props.tnk.isAutomated,
+	type: props.tnk.type,
+	status: props.tnk.status,
 });
 
 onMounted(async () => {
 	tnkTypes.value = await dictionaryService.getTnkTypes();
-})
+});
+
+const save = async () => {
+	const result = await tnkService.saveTnk(toRaw(model));
+	if (result) {
+		emit('update');
+		return useToast('success', 'Успешно', 'ТНК успешно сохранена');
+	}
+	return useToast('error', 'Ошибка', 'Ошибка сохранения ТНК');
+}
+
+const moveToApproving = async () => {
+	const result = await tnkService.moveToApproving(props.tnk.tnkId);
+	if (result) {
+		emit('update');
+		return useToast('success', 'Успешно', 'ТНК отправлена на согласование');
+	}
+	return useToast('error', 'Ошибка', 'Ошибка отправки на согласование');
+}
+
+const approve = async () => {
+	const result = await tnkService.approve(props.tnk.tnkId);
+	if (result) {
+		emit('update');
+		return useToast('success', 'Успешно', 'Вы согласовали ТНК');
+	}
+	return useToast('error', 'Ошибка', 'Ошибка согласования');
+}
+
+const decline = async () => {
+	const result = await tnkService.decline(props.tnk.tnkId);
+	if (result) {
+		emit('update');
+		return useToast('success', 'Успешно', 'Вы отклонили ТНК');
+	}
+	return useToast('error', 'Ошибка', 'Ошибка отклонения');
+}
+
+const moveToConfirming = () => {
+	console.log(5);
+}
 </script>
 
 <template>
   <div class="tnk-form">
-    <form>
+    <form @submit.prevent>
 		<div class="mb-3 half-width">
 			<label class="form-label" for="floatingPassword">Статус</label>
 			<select class="form-select" disabled>
-				<option>{{ props.tnk.status.title }}</option>
+				<option>{{ model.status.title }}</option>
 			</select>
 		</div>
 
       <div class="mb-3">
 		<label class="form-label" for="floatingInput">Название</label>
-        <input type="text" class="form-control" placeholder="Название ТНК" v-model="tnk.title">
+        <input type="text" class="form-control" placeholder="Название ТНК" v-model="model.title">
       </div>
       <div class="mb-3">
 		  <label class="form-label" for="floatingPassword">Процесс</label>
@@ -74,14 +121,17 @@ onMounted(async () => {
 
 		<div class="mb-3 half-width">
 			<label class="form-label" for="floatingPassword">Вид ТНК</label>
-			<select class="form-select" aria-label="Default select example">
-				<option v-for='t in tnkTypes' :key="t.id" :value="t.id">{{ t.title }}</option>
+			<select class="form-select" aria-label="Default select example" v-model='model.type'>
+				<option v-for='t in tnkTypes' :key="t.id" :value="t">{{ t.title }}</option>
 			</select>
 		</div>
 
 		<div class="action-buttons">
-			<button class="btn btn-success">Сохранить</button>
-			<button class="btn btn-warning">Сбросить</button>
+			<button class="btn btn-primary" @click='save'>Сохранить</button>
+			<button class="btn btn-secondary" @click='moveToApproving'>На согласование</button>
+			<button class="btn btn-success" @click='approve'>Согласовать</button>
+			<button class="btn btn-danger" @click='decline'>Отклонить</button>
+			<button class="btn btn-warning" @click='moveToConfirming'>На утверждение</button>
 		</div>
     </form>
 

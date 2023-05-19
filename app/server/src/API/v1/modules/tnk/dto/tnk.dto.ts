@@ -32,6 +32,16 @@ export class TnkDto {
 
     @ApiProperty({
         example: {
+            title: 'Новая',
+            code: 10,
+        },
+        description: 'Статус ТНК'
+    })
+    status: Status;
+
+    @ApiProperty({
+        example: {
+            id: 1,
             title: 'Общий'
         },
         description: 'Детализация ТНК'

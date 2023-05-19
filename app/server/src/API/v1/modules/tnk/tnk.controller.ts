@@ -146,7 +146,7 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Delete('/:id/ci')
+    @Delete('/:id/ci/:title')
     @ApiOperation({
         summary: 'Remove config item'
     })
@@ -154,7 +154,7 @@ export class TnkController {
         status: 200,
     })
     @Public()
-    async removeConfigItem(@GetUser() user: UserJWTPayloadDto, @Body() configItem: ConfigItemDto, @Param('id') tnkId: string) {
+    async removeConfigItem(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string, @Param('title') ci: string) {
         if (!user || !user.userId || !user.userIp) {
             user = {
                 userId: 'USER-123',
@@ -163,7 +163,7 @@ export class TnkController {
                 role: 'admin'
             }
         }
-        return this.tnkService.removeConfigItem(configItem, tnkId, user.userId, user.userIp)
+        return this.tnkService.removeConfigItem(ci, tnkId, user.userId, user.userIp)
     }
 
     @ApiTags('Tnk')
@@ -190,7 +190,7 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Delete('/:id/wg')
+    @Delete('/:id/wg/:title')
     @ApiOperation({
         summary: 'Remove work group'
     })
@@ -198,7 +198,7 @@ export class TnkController {
         status: 200,
     })
     @Public()
-    async removeWorkGroup(@GetUser() user: UserJWTPayloadDto, @Body() workGroup: WorkGroupDto, @Param('id') tnkId: string) {
+    async removeWorkGroup(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string, @Param('title') wg: string) {
         if (!user || !user.userId || !user.userIp) {
             user = {
                 userId: 'USER-123',
@@ -207,7 +207,11 @@ export class TnkController {
                 role: 'admin'
             }
         }
-        return this.tnkService.removeWorkGroup(workGroup, tnkId, user.userId, user.userIp)
+        const result = await this.tnkService.removeWorkGroup(wg, tnkId, user.userId, user.userIp);
+        if (result instanceof Error) {
+            throw new InternalServerErrorException()
+        }
+        return result;
     }
 
     @ApiTags('Tnk')
@@ -278,7 +282,7 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/moveToApproving')
+    @Get('/:id/moveToApproving')
     @ApiOperation({
         summary: 'Move tnk to approving state'
     })
@@ -300,9 +304,9 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/approve')
+    @Get('/:id/approve')
     @ApiOperation({
-        summary: 'Add config item'
+        summary: 'Approve tnk'
     })
     @ApiResponse({
         status: 200,
@@ -322,15 +326,15 @@ export class TnkController {
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/decline')
+    @Get('/:id/decline')
     @ApiOperation({
-        summary: 'Add config item',
+        summary: 'Decline tnk',
     })
     @ApiResponse({
         status: 200,
     })
     @Public()
-    async decline(@GetUser() user: UserJWTPayloadDto, @Body() approving: ApprovingDto, @Param('id') tnkId: string) {
+    async decline(@GetUser() user: UserJWTPayloadDto, @Param('id') tnkId: string) {
         if (!user || !user.userId || !user.userIp) {
             user = {
                 userId: 'USER-123',
@@ -339,12 +343,12 @@ export class TnkController {
                 role: 'admin'
             }
         }
-        return this.tnkService.decline(approving, tnkId, user.userId, user.userIp)
+        return this.tnkService.decline(tnkId, user.userId, user.userIp)
     }
 
     @ApiTags('Tnk')
     @ApiBearerAuth()
-    @Put('/:id/moveToWithdrawn')
+    @Get('/:id/moveToWithdrawn')
     @ApiOperation({
         summary: 'Move tnk to withdrawn state'
     })

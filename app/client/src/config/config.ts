@@ -1,20 +1,5 @@
 import {ConfigRouterItem, ConfigRouterItemChildren} from "../router";
 
-export const Roles = [
-    {
-        id: 1,
-        title: 'Администратор МТНК'
-    },
-    {
-        id: 2,
-        title: 'Администратор блока'
-    },
-    {
-        id: 3,
-        title: 'Администратор подразделения'
-    }
-];
-
 export const AppBarItems: Array<ConfigRouterItem> = [
     {
         id: 1,
@@ -24,16 +9,16 @@ export const AppBarItems: Array<ConfigRouterItem> = [
             {
                 id: 1,
                 title: 'Блоки',
-                url: '/users',
-                name: 'users',
-                component: 'Users'
+                url: '/blocks',
+                name: 'blocks',
+                component: 'Blocks'
             },
             {
                 id: 2,
                 title: 'Подразделения',
-                url: '/users',
-                name: 'users',
-                component: 'Users'
+                url: '/depts',
+                name: 'depts',
+                component: 'Depts'
             },
             {
                 id: 3,
@@ -72,14 +57,6 @@ export const AppBarItems: Array<ConfigRouterItem> = [
                 name: 'users',
                 component: 'Users'
             },
-            {
-                id: 8,
-                title: 'Аккаунт',
-                url: '/account',
-                name: 'account',
-                component: 'Account',
-                onlyRouter: true,
-            }
         ]
     },
     {

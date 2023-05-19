@@ -8,8 +8,7 @@ import { Ip } from '../../../../../Shared/src/ValueObject/Objects/Ip';
 import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 
 export class TnkRepository implements ITnkRepository {
-	constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {
-	}
+	constructor(private readonly logger: ILogger, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {}
 
 	find(searchParams: TnkSearchParams): Promise<Tnk[] | DatabaseError> {
 		const sql = `
@@ -55,7 +54,8 @@ export class TnkRepository implements ITnkRepository {
 		const sql = `
             UPDATE report.tnk
             SET title = $1, "processId" = $2, "subprocessId" = $3, "statusId" = $4
-			WHERE "tnkId" = $6
+			WHERE "tnkId" = $5
+			RETURNING id
         `;
 		const params = [
 			dto.title,

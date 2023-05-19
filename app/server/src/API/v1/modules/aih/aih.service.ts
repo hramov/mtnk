@@ -13,10 +13,21 @@ export class AihService {
 	) {}
 
 	async getWorkGroups() {
-
+		return [
+			{
+				title: 'СМК-РАЗРАБОТКА'
+			},
+			{
+				title: 'АСУ'
+			}
+		]
 	}
 
 	async getConfigItems() {
-
+		return [
+			{
+				title: 'КОДЕКС'
+			}
+		]
 	}
 }

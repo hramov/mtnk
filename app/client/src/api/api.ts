@@ -42,6 +42,15 @@ export class Api {
         }
     }
 
+    public async getOne<T>(url: string, filters?: string): Promise<T | null> {
+        try {
+            const response = await this.instance.get(url + '/' + (filters ? filters : ''));
+            return response.data;
+        } catch(_err: unknown) {
+            return null;
+        }
+    }
+
     public async post<T>(url: string, data: T, opts?: AxiosRequestConfig) {
         try {
             const response = await this.instance.post(url, data, opts);

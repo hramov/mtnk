@@ -4,10 +4,8 @@ import {
 	DICTIONARY_REPOSITORY,
 	PROCESS_REPOSITORY,
 	SUBPROCESS_REPOSITORY, TNK_EVENT_REPOSITORY,
-	TNK_REPOSITORY,
-	USER_REPOSITORY,
+	TNK_REPOSITORY, USER_EVENT_REPOSITORY, USER_REPOSITORY,
 } from './repository.constants';
-import {UserRepository} from "./user.repository";
 import {ILogger} from "../../../../../Core/ICore";
 import { EVENT_BUS, LOGGER, MSSQL_STORAGE, POSTGRES_STORAGE } from '../../constants';
 import {PostgresModule} from "../postgres/postgres.module";
@@ -24,16 +22,25 @@ import { AihRepository } from './aih.repository';
 import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 import { IMssqlQueryOptions } from '../IMssqlQueryOptions';
 import { MssqlModule } from '../mssql/mssql.module';
+import { UserEventRepository } from './event/user.repository';
+import { UserRepository } from './user.repository';
 
 @Module({
 	imports: [PostgresModule, MssqlModule, LoggerModule, EventBusModule],
 	providers: [
 		{
 			provide: USER_REPOSITORY,
-			useFactory: (logger: ILogger, eventBus: IEventBus, storage: IDatabaseConnection<IPostgresQueryOptions>) => {
-				return new UserRepository(logger, eventBus, storage)
+			useFactory: (logger: ILogger, storage: IDatabaseConnection<IPostgresQueryOptions>) => {
+				return new UserRepository(logger, storage)
 			},
-			inject: [LOGGER, EVENT_BUS, POSTGRES_STORAGE],
+			inject: [LOGGER, POSTGRES_STORAGE],
+		},
+		{
+			provide: USER_EVENT_REPOSITORY,
+			useFactory: (logger: ILogger, storage: IDatabaseConnection<IPostgresQueryOptions>) => {
+				return new UserEventRepository(logger, storage)
+			},
+			inject: [LOGGER, POSTGRES_STORAGE],
 		},
 		{
 			provide: TNK_REPOSITORY,
@@ -78,6 +85,6 @@ import { MssqlModule } from '../mssql/mssql.module';
 			inject: [LOGGER, MSSQL_STORAGE],
 		},
 	],
-	exports: [USER_REPOSITORY, TNK_REPOSITORY, TNK_EVENT_REPOSITORY, DICTIONARY_REPOSITORY, PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY, AIH_REPOSITORY],
+	exports: [USER_REPOSITORY, USER_EVENT_REPOSITORY, TNK_REPOSITORY, TNK_EVENT_REPOSITORY, DICTIONARY_REPOSITORY, PROCESS_REPOSITORY, SUBPROCESS_REPOSITORY, AIH_REPOSITORY],
 })
 export class RepositoryModule {}

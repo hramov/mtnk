@@ -9,11 +9,13 @@ const route = useRoute();
 const tnk = ref<Tnk>();
 const tnkId = route.params.id;
 const tnkService = new TnkService();
+const hash = ref<string>('');
 
 tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
 
 const update = async () => {
-	tnkService.getTnk(String(tnkId)).then(data => tnk.value = data);
+	tnk.value = await tnkService.getTnk(String(tnkId));
+	hash.value = JSON.stringify(tnk.value);
 }
 </script>
 
@@ -33,6 +35,6 @@ const update = async () => {
     </div>
   </div>
   <div class="tnk">
-    <TnkTabs :tnk="tnk" v-if='tnk' @update='update'/>
+    <TnkTabs :tnk="tnk" v-if='tnk' @update='update' :key='hash'/>
   </div>
 </template>

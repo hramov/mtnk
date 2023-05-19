@@ -23,26 +23,38 @@ export class TnkService {
         return data;
     }
 
-    async saveTnk(tnk: Tnk): Promise<string> {
+    async saveTnk(tnk: any): Promise<string> {
         if (tnk.id) {
             return this.instance.put(this.baseUrl, tnk.id, tnk);
         }
         return this.instance.post(this.baseUrl, tnk);
     }
 
-    async addWorkGroup(wg: any) {
-        return this.instance.post(this.baseUrl + '/wg', wg);
+    async moveToApproving(tnkId: string): Promise<{ id: string } | null> {
+        return this.instance.getOne<{id: string}>(this.baseUrl + '/' + tnkId + '/moveToApproving');
     }
 
-    async removeWorkGroup(wg: any) {
-        return this.instance.delete(this.baseUrl + '/wg', wg);
+    async approve(tnkId: string): Promise<{ id: string } | null> {
+        return this.instance.getOne<{id: string}>(this.baseUrl + '/' + tnkId + '/approve');
     }
 
-    async addConfigItem(ci: any) {
-        return this.instance.post(this.baseUrl + '/ci', ci);
+    async decline(tnkId: string): Promise<{ id: string } | null> {
+        return this.instance.getOne<{id: string}>(this.baseUrl + '/' + tnkId + '/decline');
     }
 
-    async removeConfigItem(ci: any) {
-        return this.instance.delete(this.baseUrl + '/ci', ci);
+    async addWorkGroup(wg: any, tnkId: string) {
+        return this.instance.post(this.baseUrl + '/' + tnkId + '/wg', wg);
+    }
+
+    async removeWorkGroup(wg: any, tnkId: string) {
+        return this.instance.delete(this.baseUrl + '/' + tnkId + '/wg', wg.title);
+    }
+
+    async addConfigItem(ci: any, tnkId: string) {
+        return this.instance.post(this.baseUrl + '/' + tnkId + '/ci', ci);
+    }
+
+    async removeConfigItem(ci: any, tnkId: string) {
+        return this.instance.delete(this.baseUrl + '/' + tnkId + '/ci', ci.title);
     }
 }

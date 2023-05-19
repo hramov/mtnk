@@ -1,15 +1,13 @@
-import {Uuid} from "../../Shared/src/ValueObject/Objects/Uuid";
-import {User} from "./User";
-import {Profile} from "./Entity/Profile";
+import { User, UserConstructor } from './User';
 import {DatabaseError} from "../Error/Database.error";
 import {IBaseRepository} from "../../Shared/src/IBaseRepository";
+import { UserSearchParams } from './ValueObject/UserSearchParams';
+import { Ip } from '../../Shared/src/ValueObject/Objects/Ip';
+import { Candidate } from './ValueObject/Candidate';
 
 export interface IUserRepository extends IBaseRepository {
-
-    create(user: any): Promise<User | DatabaseError>
-    update(user: User): Promise<User | DatabaseError>
-    find(searchParams: any): Promise<User[] | DatabaseError>
-    getUserById(userId: Uuid): Promise<User | DatabaseError>
-    getUserByUsername(username: string): Promise<User | DatabaseError>
-    getProfileById(profileId: number): Promise<Profile | DatabaseError>
+    create(user: UserConstructor, userId: string, userIp: Ip): Promise<{id: number} | DatabaseError>
+    update(user: UserConstructor, userId: string, userIp: Ip): Promise<{id: number} | DatabaseError>
+    find(searchParams: UserSearchParams): Promise<User[] | DatabaseError>
+    getUserForLogin(username: string): Promise<Candidate | DatabaseError>
 }

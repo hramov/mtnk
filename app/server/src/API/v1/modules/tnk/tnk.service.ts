@@ -3,6 +3,7 @@ import {
     SUBPROCESS_REPOSITORY,
     TNK_EVENT_REPOSITORY,
     TNK_REPOSITORY,
+    USER_EVENT_REPOSITORY,
 } from '../../common/persistent/repository/repository.constants';
 import { EVENT_BUS, LOGGER } from '../../common/constants';
 import { tnkFactory } from '../../../../Core/Tnk/TnkFactory';
@@ -18,8 +19,6 @@ import { WorkGroup } from '../../../../Core/Tnk/ValueObject/Workgroup';
 import { Operation } from '../../../../Core/Tnk/ValueObject/Operation';
 import { WorkGroupDto } from './dto/workGroup.dto';
 import { OperationDto } from './dto/operation.dto';
-import { ApprovingItem } from '../../../../Core/Tnk/ValueObject/ApprovingItem';
-import { ApprovingDto } from './dto/approving.dto';
 import { ISubprocessRepository } from '../../../../Core/Tnk/Repository/ISubprocessRepository';
 import { Uuid } from '../../../../Shared/src/ValueObject/Objects/Uuid';
 import { TnkSearchParams } from '../../../../Core/Tnk/ValueObject/TnkSearchParams';
@@ -27,12 +26,15 @@ import { ITnkRepository } from '../../../../Core/Tnk/Repository/ITnkRepository';
 import { ITnkEventRepository } from '../../../../Core/Tnk/Repository/event/ITnkEventRepository';
 import { Status } from '../../../../Core/Tnk/Entity/Status';
 import { TnkStatuses } from '../../../../Core/Constants';
+import { IUserEventRepository } from '../../../../Core/User/Repository/event/IUserEventRepository';
+import { userFactory } from '../../../../Core/User/UserFactory';
 
 @Injectable()
 export class TnkService {
     constructor(
         @Inject(LOGGER) private readonly logger: ILogger,
         @Inject(TNK_EVENT_REPOSITORY) private readonly tnkEventRepository: ITnkEventRepository,
+        @Inject(USER_EVENT_REPOSITORY) private readonly userEventRepository: IUserEventRepository,
         @Inject(TNK_REPOSITORY) private readonly tnkRepository: ITnkRepository,
         @Inject(SUBPROCESS_REPOSITORY) private readonly subprocessRepository: ISubprocessRepository,
         @Inject(EVENT_BUS) private readonly eventBus: IEventBus
@@ -45,7 +47,7 @@ export class TnkService {
             isActive: dto.isActive,
             isDigital: dto.isDigital,
             isAutomated: dto.isAutomated,
-            status: null,
+            status: dto.status,
             type: dto.type,
             process: dto.process,
             subprocess: dto.subprocess,
@@ -58,7 +60,6 @@ export class TnkService {
 
     async getById(tnkId: string, userId: string) {
         const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
-
         if (currentTnk instanceof DatabaseError) {
             return currentTnk;
         }
@@ -66,9 +67,17 @@ export class TnkService {
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
 
-        await tnk.getUserPrivileges(userId);
+        const user = userFactory(this.userEventRepository);
+        const userData = await this.userEventRepository.getByAggregateId(userId);
+        if (userData instanceof DatabaseError) {
+            return userData;
+        }
 
-        return tnk;
+        user.load(userData);
+
+        currentTnk.userPrivileges = await user.getPrivileges(currentTnk);
+
+        return currentTnk;
     }
 
     async create(dto: TnkDto, userId: string, userIp: Ip) {
@@ -102,6 +111,7 @@ export class TnkService {
     }
 
     async update(dto: TnkDto, tnkId: string, userId: string, userIp: Ip) {
+
         const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
 
         if (currentTnk instanceof DatabaseError) {
@@ -190,7 +200,7 @@ export class TnkService {
         }), tnkId, userId, userIp);
     }
 
-    async removeConfigItem(dto: ConfigItemDto, tnkId: string, userId: string, userIp: Ip) {
+    async removeConfigItem(ci: string, tnkId: string, userId: string, userIp: Ip) {
         const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
         if (currentTnk instanceof DatabaseError) {
             return currentTnk;
@@ -198,10 +208,11 @@ export class TnkService {
 
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
-        return tnk.removeConfigItem(new ConfigItem(tnkId, dto.title), tnkId, userId, userIp);
+
+        return tnk.removeConfigItem(new ConfigItem(tnkId, ci), tnkId, userId, userIp);
     }
 
-    async removeWorkGroup(dto: WorkGroupDto, tnkId: string, userId: string, userIp: Ip) {
+    async removeWorkGroup(wg: string, tnkId: string, userId: string, userIp: Ip) {
         const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
         if (currentTnk instanceof DatabaseError) {
             return currentTnk;
@@ -209,7 +220,7 @@ export class TnkService {
 
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
-        return tnk.removeWorkGroup(new WorkGroup(tnkId, dto.title), tnkId, userId, userIp);
+        return tnk.removeWorkGroup(new WorkGroup(tnkId, wg), tnkId, userId, userIp);
     }
 
     async updateOperation(dto: OperationDto, tnkId: string, userId: string, userIp: Ip) {
@@ -272,6 +283,8 @@ export class TnkService {
                 method: 'moveToApproving',
             });
         }
+
+        return reportResult;
     }
 
     async approve(tnkId: string, userId: string, userIp: Ip) {
@@ -305,26 +318,28 @@ export class TnkService {
                     method: 'approve',
                 });
             }
+            return reportResult;
         }
+        return result.result
     }
 
-    async decline(dto: ApprovingDto, tnkId: string, userId: string, userIp: Ip) {
+    async decline(tnkId: string, userId: string, userIp: Ip) {
         const currentTnk = await this.tnkEventRepository.getByAggregateId(tnkId);
         if (currentTnk instanceof DatabaseError) {
             return currentTnk;
         }
 
+        const subprocess = await this.subprocessRepository.findOne(currentTnk.subprocess.id);
+        if (subprocess instanceof DatabaseError) {
+            return subprocess;
+        }
+
+        currentTnk.subprocess.approvalSetup = subprocess.approvalSetup;
+
         const tnk = tnkFactory(this.tnkEventRepository);
         tnk.load(currentTnk);
 
-        const result = await tnk.decline(new ApprovingItem({
-            tnkId: tnkId,
-            userId: userId,
-            groupNum: dto.groupNum,
-            isActive: dto.isActive,
-            isApproved: false,
-            comments: dto.comments,
-        }), tnkId, userId, userIp);
+        const result = await tnk.decline(tnkId, userId, userIp);
         if (result instanceof Error) {
             this.logger.error(result.message, 'TnkService', result.stack, {
                 method: 'decline',
@@ -339,6 +354,7 @@ export class TnkService {
                 method: 'decline',
             });
         }
+        return reportResult;
     }
 
     async moveToWithdrawn(tnkId: string, userId: string, userIp: Ip) {

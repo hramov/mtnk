@@ -203,8 +203,8 @@ export class TnkEventRepository implements ITnkEventRepository {
                 this.createHistoryItem('Добавлен ЭК ' + event.data.title, tnk.history, event);
             } else if (event.type === 'ConfigItemRemoved') {
                 const data = new ConfigItem(event.data.tnkId, event.data.title);
-                tnk.configItems = tnk.configItems.filter((item: ConfigItem) => item !== data);
-                this.createHistoryItem('Удалена ЭК ' + event.data.title, tnk.history, event);
+                tnk.configItems = tnk.configItems.filter((item: ConfigItem) => !item.equals(data));
+                this.createHistoryItem('Удален ЭК ' + event.data.title, tnk.history, event);
             } else if (event.type ===  'WorkGroupAdded') {
                 const data = new WorkGroup(event.data.tnkId, event.data.title);
                 if (tnk.workGroups && Array.isArray(tnk.workGroups)) {
@@ -215,7 +215,7 @@ export class TnkEventRepository implements ITnkEventRepository {
                 this.createHistoryItem('Добавлена РГ ' + event.data.title, tnk.history, event);
             } else if (event.type ===  'WorkGroupRemoved') {
                 const data = new WorkGroup(event.data.tnkId, event.data.title);
-                tnk.workGroups = tnk.workGroups.filter((item: WorkGroup) => item !== data);
+                tnk.workGroups = tnk.workGroups.filter((item: WorkGroup) => !item.equals(data));
                 this.createHistoryItem('Удалена РГ ' + event.data.title, tnk.history, event);
             } else if (event.type ===  'OperationAdded') {
                 const data = new Operation({
@@ -255,7 +255,7 @@ export class TnkEventRepository implements ITnkEventRepository {
                     assignee: event.data.assignee,
                     sortOrder: event.data.sortOrder,
                 });
-                tnk.operations = tnk.operations.filter((item: Operation) => item.equals(data))
+                tnk.operations = tnk.operations.filter((item: Operation) => !item.equals(data))
                 this.createHistoryItem('Удалена операция ' + event.data.title, tnk.history, event);
             } else if (event.type === 'ApproverAdded') {
                 const data = new ApprovingItem({
@@ -297,7 +297,7 @@ export class TnkEventRepository implements ITnkEventRepository {
                     });
                     tnk.approvalQueue.splice(previousItem, 1, data);
                 }
-                this.createHistoryItem('ТНК согласована пользователем' + event.data.userId, tnk.history, event);
+                this.createHistoryItem('ТНК согласована пользователем ' + event.data.userId, tnk.history, event);
             } else if (event.type === 'TnkMovedToApproving') {
                 this.createTimelineItem('На согласовании', tnk.timeline, event);
                 this.createHistoryItem('ТНК отправлена на согласование', tnk.history, event);
@@ -306,7 +306,7 @@ export class TnkEventRepository implements ITnkEventRepository {
                 this.createHistoryItem('ТНК утверждена', tnk.history, event);
             } else if (event.type === 'TnkDeclinedByApprover') {
                 this.createTimelineItem('На доработке', tnk.timeline, event);
-                this.createHistoryItem('ТНК отклонена', tnk.history, event);
+                this.createHistoryItem('ТНК отклонена пользователем ' + event.data.userId, tnk.history, event);
             } else if (event.type === 'TnkMovedToWithdrawn') {
                 this.createTimelineItem('Выведена', tnk.timeline, event);
                 this.createHistoryItem('ТНК выведена', tnk.history, event);

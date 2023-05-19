@@ -12,23 +12,23 @@ import { IPostgresQueryOptions } from '../IPostgresQueryOptions';
 export class DictionaryRepository implements IDictionaryRepository {
     constructor(private readonly logger: ILogger, private readonly eventBus: IEventBus, private readonly storage: IDatabaseConnection<IPostgresQueryOptions>) {}
 
-    addProcesses(processes: Process[]): Promise<void | DatabaseError> {
+    async addProcesses(processes: Process[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
     }
 
-    addSubprocesses(subprocesses: Subprocess[]): Promise<void | DatabaseError> {
+    async addSubprocesses(subprocesses: Subprocess[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
     }
 
-    getProcess(processId: number): Promise<Process | DatabaseError> {
+    async getProcess(processId: number): Promise<Process | DatabaseError> {
         return Promise.resolve(undefined);
     }
 
-    getSubprocess(subprocessId: number): Promise<Subprocess | DatabaseError> {
+    async getSubprocess(subprocessId: number): Promise<Subprocess | DatabaseError> {
         return Promise.resolve(undefined);
     }
 
-    addOperations(operations: ReferenceOperation[]): Promise<void | DatabaseError> {
+    async addOperations(operations: ReferenceOperation[]): Promise<void | DatabaseError> {
         return Promise.resolve(undefined);
     }
 

@@ -10,7 +10,7 @@ const props = defineProps(['workGroups']);
 const emit = defineEmits(['update']);
 const route = useRoute();
 const tnkService = new TnkService();
-
+const tnkId: string = route.params.id as string;
 const wgs = ref<any[]>([]);
 const currentWorkGroup= ref('');
 const aihService = new AihService();
@@ -32,7 +32,7 @@ const chosen = async (wg: any) => {
 		title: wg.title,
 	}
 
-	const result = await tnkService.addWorkGroup(newWg);
+	const result = await tnkService.addWorkGroup(newWg, tnkId);
 	if (result) {
 		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' добавлена');
 		emit('update');
@@ -43,7 +43,7 @@ const deleteWg = async (wg: any) => {
 	const sure = confirm('Удалить рабочую группу ' + wg.title + '?')
 	if (!sure) return;
 
-	const result = await tnkService.removeWorkGroup(wg);
+	const result = await tnkService.removeWorkGroup(wg, tnkId);
 	if (result) {
 		useToast('success', 'Успешно', 'Рабочая группа ' + wg.title + ' удалена');
 		emit('update')

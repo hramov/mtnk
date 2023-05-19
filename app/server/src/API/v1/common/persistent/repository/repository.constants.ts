@@ -1,4 +1,5 @@
 export const USER_REPOSITORY = Symbol('userRepository');
+export const USER_EVENT_REPOSITORY = Symbol('userEventRepository');
 export const TNK_REPOSITORY = Symbol('tnkRepository');
 export const TNK_EVENT_REPOSITORY = Symbol('tnkEventRepository');
 export const DICTIONARY_REPOSITORY = Symbol('dictionaryRepository');

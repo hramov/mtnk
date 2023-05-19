@@ -2,6 +2,7 @@ import {createRouter, createWebHistory, RouteLocationRaw} from 'vue-router';
 import Home from './ui/views/Home.vue'
 import Login from './ui/views/Login.vue'
 import Logout from './ui/views/Logout.vue'
+import Account from './ui/views/user/Account.vue'
 import {AppBarItems} from "./config/config";
 import {flatten} from 'lodash';
 
@@ -46,6 +47,11 @@ const homeItems = [
         path: '/',
         name: 'Home',
         component: Home,
+    },
+    {
+        path: '/account',
+        name: 'account',
+        component: Account,
     },
     {
         path: '/login',

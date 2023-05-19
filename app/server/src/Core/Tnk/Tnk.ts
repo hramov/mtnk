@@ -62,7 +62,7 @@ export type TnkConstructor = {
     userPrivileges?: any;
 }
 
-export class Tnk extends BaseEntity<number>{
+export class Tnk extends BaseEntity<string>{
     public tnkId: string;
     public title: string;
     public isActive: boolean;
@@ -78,7 +78,6 @@ export class Tnk extends BaseEntity<number>{
     public workGroups: WorkGroup[];
     public operations: Operation[];
     public history: History[];
-    public userPrivileges: any;
 
     constructor(private readonly eventRepository: ITnkEventRepository) {
         super();
@@ -101,14 +100,10 @@ export class Tnk extends BaseEntity<number>{
 
         this.tnkId = tnk.tnkId;
         this.approvalQueue = tnk.approvalQueue;
-        this.configItems = tnk.configItems;
-        this.workGroups = tnk.workGroups;
-        this.operations = tnk.operations;
+        this.configItems = tnk.configItems || [];
+        this.workGroups = tnk.workGroups || [];
+        this.operations = tnk.operations || [];
         this.history = tnk.history;
-    }
-
-    public async getUserPrivileges(userId: string) {
-        this.userPrivileges = {};
     }
 
     public async create(userId: string, userIp: Ip, approvalSetup: ApprovingItem[]) {
@@ -139,6 +134,7 @@ export class Tnk extends BaseEntity<number>{
         }
 
         const delta = this.calculateDelta(tnkData);
+
         if (delta === null) {
             return new NothingToUpdateError();
         }
@@ -238,7 +234,7 @@ export class Tnk extends BaseEntity<number>{
         let counter = 0;
         for (const wg of this.workGroups) {
             if (wg.equals(workGroup)) {
-                return new WorkGroupIsAlreadyInListError();
+                counter++;
             }
         }
 
@@ -316,8 +312,15 @@ export class Tnk extends BaseEntity<number>{
     public async moveToApproving(tnkId: string, userId: string, userIp: Ip) {
         if (this.status.code === TnkStatuses.New || this.status.code === TnkStatuses.Modified) {
             const events: TnkEvents[] = [];
-            const tnk = this.mapEntityToObject();
-            const delta = this.calculateDelta(tnk);
+            this.approvalQueue.forEach((item: ApprovingItem) => {
+                item.isApproved = null;
+            })
+
+            const delta = {
+                tnkId: tnkId,
+                status: new Status('На согласовании', TnkStatuses.Approving),
+                approvalQueue: this.approvalQueue,
+            } as TnkConstructor;
 
             const event = new TnkMovedToApproving(userId, userIp, tnkId);
             events.push(event);
@@ -393,42 +396,34 @@ export class Tnk extends BaseEntity<number>{
         };
     }
 
-    public async decline(approvingItem: ApprovingItem, tnkId: string, userId: string, userIp: Ip) {
-
+    public async decline(tnkId: string, userId: string, userIp: Ip) {
+        const events: TnkEvents[] = [];
         if (this.status.code !== TnkStatuses.Approving) {
             return new Error();
         }
 
         const currentGroup = this.getCurrentApprovalGroup();
 
-        if (currentGroup !== approvingItem.groupNum) {
-            return new Error();
-        }
-
-        if (approvingItem.userId !== userId) {
-            return new Error();
-        }
-
-        if (!approvingItem.comments) {
-            return new Error();
-        }
-
-        const previousItem = this.approvalQueue.findIndex((item) => item.userId === approvingItem.userId);
+        const previousItem = this.approvalQueue.findIndex((item) => item.userId === userId && !item.isApproved && item.groupNum === currentGroup);
         if (previousItem !== -1) {
-            const events: TnkEvents[] = [];
-
+            const approvingItem = new ApprovingItem({
+                tnkId: tnkId,
+                userId: userId,
+                groupNum: currentGroup,
+                isApproved: false,
+                isActive: true,
+                dateCreated: new Date(),
+            });
             this.approvalQueue.splice(previousItem, 1, approvingItem);
-
             const event = new TnkDeclinedByApprover(userId, userIp, approvingItem, tnkId);
             events.push(event);
 
             const tnk = this.mapEntityToObject();
             tnk.status = new Status('На доработке', TnkStatuses.Modified);
-
-            const updateEvent = new TnkUpdated(userId, userIp, this.calculateDelta(tnk), tnkId);
+            const updateEvent = new TnkUpdated(userId, userIp, tnk, tnkId);
             events.push(updateEvent);
 
-            return this.eventRepository.writeEvents(events)
+            return this.eventRepository.writeEvents(events);
         }
         return new Error();
     }
