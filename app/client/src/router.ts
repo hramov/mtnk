@@ -5,6 +5,7 @@ import Logout from './ui/views/Logout.vue'
 import Account from './ui/views/user/Account.vue'
 import {AppBarItems} from "./config/config";
 import {flatten} from 'lodash';
+import { useUserStore } from './store/user.store';
 
 export class ConfigRouterItem {
     id: number;
@@ -73,6 +74,15 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach((to) => {
+    const userStore = useUserStore();
+    if (to.path !== '/login') {
+        if (!userStore.user.id) {
+            router.push('/login');
+        }
+    }
 });
 
 export default router;

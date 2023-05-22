@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import Toast from './components/layout/Toast.vue'
 import AppBar from "./components/layout/AppBar.vue";
+import { useUserStore } from '../store/user.store';
+
+const userStore = useUserStore();
+userStore.getUser();
+
 </script>
 
 <template>
-  <AppBar />
+  <AppBar v-if='useUserStore.user?.id'/>
 
   <div class="container-fluid">
     <div class="row">
