@@ -85,7 +85,6 @@ export class Tnk extends BaseEntity<string>{
 
     private static checkFieldsEquality<T>(field1: T, field2: T): boolean {
         return JSON.stringify(field1) === JSON.stringify(field2);
-
     }
 
     public load(tnk: TnkConstructor) {

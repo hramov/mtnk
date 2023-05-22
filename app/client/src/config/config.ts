@@ -118,45 +118,45 @@ export const AppBarItems: Array<ConfigRouterItem> = [
             {
                 id: 3,
                 title: 'Операции',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList',
+                url: '/operation',
+                name: 'operation',
+                component: 'OperationList',
                 divider: true,
             },
             {
                 id: 4,
                 title: 'Исполнитель операции',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList'
+                url: '/assignee',
+                name: 'assignee',
+                component: 'OperationAssigneeList'
             },
             {
                 id: 5,
                 title: 'Единица измерения операции',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList'
+                url: '/unit',
+                name: 'unit',
+                component: 'OperationUnitList'
             },
             {
                 id: 6,
                 title: 'Источник операции',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList'
+                url: '/source',
+                name: 'source',
+                component: 'OperationSourceList'
             },
             {
                 id: 7,
                 title: 'Вид ТНК',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList'
+                url: '/tnkType',
+                name: 'tnkType',
+                component: 'TnkTypeList'
             },
             {
                 id: 8,
                 title: 'Причина деактивации',
-                url: '/subprocess',
-                name: 'subprocess',
-                component: 'SubprocessList'
+                url: '/deactivateReason',
+                name: 'deactivateReason',
+                component: 'DeactivateReasonList'
             }
         ]
     },

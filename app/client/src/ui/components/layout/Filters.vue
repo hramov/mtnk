@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import TitleFilter from "./filters/TitleFilter.vue";
-import { Filters } from '../../../config/config';
-const emit = defineEmits(['filters']);
 
-const filters = ref<Filters>({});
+type FilterFields = 'title' | 'isActive';
+
+const emit = defineEmits(['filters']);
+const props = defineProps<{ fields: FilterFields[]}>();
+
+const filters = ref<any>({});
 
 const applyFilters = (field: string, data: string) => {
   filters.value[field] = data;
@@ -27,8 +30,8 @@ const apply = () => {
           <h5 class="modal-title" id="filtersModalLabel">Фильтры</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <TitleFilter @title_filter="applyTitleFilter"/>
+        <div class="modal-body" v-if="fields">
+          <TitleFilter @title_filter="applyTitleFilter" v-if="fields.includes('title')"/>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
