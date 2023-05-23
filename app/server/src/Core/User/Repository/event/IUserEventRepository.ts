@@ -3,8 +3,10 @@ import { DatabaseError } from '../../../Error/Database.error';
 import { UserCreated } from '../../Events/UserCreated';
 import { UserConstructor } from '../../User';
 import { UserSearchParams } from '../../ValueObject/UserSearchParams';
+import { UserUpdated } from '../../Events/UserUpdated';
+import { UserPasswordChanged } from '../../Events/UserPasswordChanged';
 
-export type UserEvent = UserCreated
+export type UserEvent = UserCreated | UserUpdated | UserPasswordChanged
 
 export interface IUserEventRepository extends IBaseRepository {
 	writeEvent(event: UserEvent);

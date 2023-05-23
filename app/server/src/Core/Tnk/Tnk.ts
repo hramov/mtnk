@@ -127,7 +127,6 @@ export class Tnk extends BaseEntity<string>{
     }
 
     public async update(tnkData: TnkConstructor, tnkId: string, userId: string, userIp: Ip) {
-
         if (this.status.code !== TnkStatuses.New && this.status.code !== TnkStatuses.Modified) {
             return new WrongTnkStatusError(this.status.title, ['Новая', 'На модификации']);
         }

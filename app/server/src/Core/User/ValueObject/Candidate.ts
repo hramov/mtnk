@@ -1,4 +1,3 @@
-import {Uuid} from "../../../Shared/src/ValueObject/Objects/Uuid";
 import { ValueObject } from '../../../Shared/src/ValueObject/ValueObject';
 
 export class Candidate extends ValueObject {
